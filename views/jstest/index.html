@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<meta name="viewport"
+		content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
+	<head>
+
+<title>Java Script Interface Test</title>
+		<script>
+			function goPage(pageUrl) {
+			 var host = location.host
+			 var proto = location.protocol
+			 var path = location.pathname.substring(0, location.pathname.lastIndexOf('/')+1);
+			 var urlval = proto +"//" + host + path + pageUrl
+			 var full = "ocbt://com.skmc.okcashbag.home_google/detail/event?url=" + encodeURI(urlval) + "&title=test"
+			 console.log(full);
+             location.href = full;
+			}
+		</script>
+
+		<script>
+			function goCashbeePage(pageUrl) {
+			 var host = location.host
+			 var proto = location.protocol
+			 var path = location.pathname.substring(0, location.pathname.lastIndexOf('/')+1);
+			 var urlval = proto +"//" + host + path + pageUrl
+			 var full = "ocbt://com.skmc.okcashbag.home_google/cashbeeMain?url=" + encodeURI(urlval) + "&title=test"
+			 console.log(full);
+             location.href = full;
+			}
+		</script>
+</head>
+
+	<body>
+		<table>
+
+			<tr id="a1">
+				<td><a href="javascript:goPage('android_js_test.html')"><h2>OcbAndroidJS Script</h2></a></td>
+			</tr>
+
+			<tr id="a2">
+				<td><a href="javascript:goPage('title_js_test.html')"><h2>OcbTitleViewJS Script</h2></a></td>
+			</tr>
+
+			<tr id="a2">
+				<td><a href="javascript:goCashbeePage('cashbee_test.html')"><h2>OcbCashbeeJS Script</h2></a></td>
+			</tr>
+
+		</table>
+	</body>
+</html>

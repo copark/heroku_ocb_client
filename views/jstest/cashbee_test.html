@@ -1,0 +1,587 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<meta name="viewport"
+	content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
+<head>
+
+<style>
+	table,th,td {
+	border: 1px solid black;
+	}
+
+	input[type="text"] {
+	min-width: 200px;
+	}
+</style>
+<title>Cashbee Javascript Interface Test</title>
+
+<script src="OcbCashbeeConstants.js"></script>
+<script>
+	// CALLBACK : BACK KEY
+	var OcbKeyDispatcher = new Object();
+
+	OcbKeyDispatcher.mode = "close";
+	OcbKeyDispatcher.onBackKey = function() {
+		console.log("callback : OcbKeyDispatcher.onBackKey");
+		if (OcbKeyDispatcher.mode == "close") {
+			OcbAndroidJS.requestCloseWindow();
+		} else {
+			OcbAndroidJS.requestGoBack();
+		}
+	};
+
+	function printResult(id, str) {
+		document.getElementById(id).innerHTML = "[result] " + str;
+	}
+
+	function jsonToString(obj) {
+		console.log("called jsonToString");
+		var str = JSON.stringify(obj);
+		console.log("jsonToString:", str);
+		return str;
+	}
+
+	function stringToJson(str) {
+		console.log("called stringToJson");
+		obj = JSON.parse(str);
+		return obj;
+	}
+
+	var CashbeeObject = new Object();
+
+	CashbeeObject.defaultCallback = function(mcode, scode, msg) {
+			var message = "M = " + mcode + ", S = " + scode + ", MSG = " + msg;
+		console.log("callback called " + message);
+		printResult(getId(mcode), message);
+	}
+
+	function initialize() {
+		printResult('initialize', '');
+		OcbCashbeeJS.initialize('CashbeeObject.defaultCallback');
+	}
+
+	function getIssuedStatus() {
+		printResult('getIssuedStatus', '');
+		OcbCashbeeJS.getIssuedStatus('CashbeeObject.defaultCallback');
+	}
+
+	function issueApplet() {
+		printResult('issueApplet', '');
+		OcbCashbeeJS.issueApplet('CashbeeObject.defaultCallback');
+	}
+
+	function setEnable() {
+		printResult('setEnable', '');
+		OcbCashbeeJS.setEnable('CashbeeObject.defaultCallback');
+	}
+
+	function registerPerso() {
+		printResult('registerPerso', '');
+		OcbCashbeeJS.registerPerso('CashbeeObject.defaultCallback');
+	}
+
+	function getCardInfo() {
+		printResult('getCardInfo', '');
+		OcbCashbeeJS.getCardInfo('CashbeeObject.defaultCallback');
+	}
+
+	function getRecentUsingList() {
+		printResult('getRecentUsingList', '');
+		OcbCashbeeJS.getRecentUsingList('CashbeeObject.defaultCallback');
+	}
+
+	function getUserInfoLookup() {
+		printResult('getUserInfoLookup', '');
+		OcbCashbeeJS.getUserInfoLookup('CashbeeObject.defaultCallback');
+	}
+
+	function setRegistrationOwnerShip() {
+		printResult('setRegistrationOwnerShip', '');
+		OcbCashbeeJS.setRegistrationOwnerShip('CashbeeObject.defaultCallback');
+	}
+
+	function setAutoChargeRelease() {
+		printResult('setAutoChargeRelease', '');
+		OcbCashbeeJS.setAutoChargeRelease('CashbeeObject.defaultCallback');
+	}
+
+	function delApplet() {
+		printResult('delApplet', '');
+		OcbCashbeeJS.delApplet('CashbeeObject.defaultCallback');
+	}
+
+	function setPersonalProvision() {
+		printResult('setPersonalProvision', '');
+
+	    // arg1, arg2 필수 그외 선택사항
+        // Stringarg1약관동의 *필수 예)동의“1”이외 에러
+        // String arg2 정보수집동의 * 필수 예 ) 동의 “1” 이외 에러
+        // Stringarg3성별 *선택 예)남자“0” 여자“1”
+        // String arg4 지역 * 선택 예 ) 서울01, 경기02, 강원03, 경남04, 경북05, 광 주06, 대구07, 대전08, 부산09, 울산10, 인천11, 전남12, 전북13, 제주14, 충남15, 충북 16, 세종17
+        // Stringarg5나이 *선택 예)19
+        // String arg6 sms수신동의 * 선택 예 ) 1
+		OcbCashbeeJS.setPersonalProvision('CashbeeObject.defaultCallback', "1", "1", "0", "01", "20", "0");
+	}
+
+	function setOwnerShipRelease() {
+		printResult('setOwnerShipRelease', '');
+		OcbCashbeeJS.setOwnerShipRelease('CashbeeObject.defaultCallback');
+	}
+
+	function setCardTypeChangeBirthDay() {
+		printResult('setCardTypeChangeBirthDay', '');
+		OcbCashbeeJS.setCardTypeChangeBirthDay('CashbeeObject.defaultCallback',"20001023");
+	}
+
+	function setCardTypeChangeGrade() {
+		printResult('setCardTypeChangeGrade', '');
+		OcbCashbeeJS.setCardTypeChangeGrade('CashbeeObject.defaultCallback', '23');
+	}
+
+	function getMonthlyUseList() {
+		printResult('getMonthlyUseList', '');
+		OcbCashbeeJS.getMonthlyUseList('CashbeeObject.defaultCallback', 1, '20160101', '20160130', 15);
+	}
+
+	function getInfoPlace() {
+		printResult('getInfoPlace', '');
+		OcbCashbeeJS.getInfoPlace('CashbeeObject.defaultCallback');
+	}
+
+	function getInfoPlaceText() {
+		printResult('getInfoPlaceText', '');
+		OcbCashbeeJS.getInfoPlaceText('CashbeeObject.defaultCallback');
+	}
+	function getServiceCenter() {
+		printResult('getServiceCenter', '');
+		OcbCashbeeJS.getServiceCenter('CashbeeObject.defaultCallback');
+	}
+
+	function getCashbeeTermsUrl() {
+		printResult('getCashbeeTermsUrl', '');
+		OcbCashbeeJS.getCashbeeTermsUrl('CashbeeObject.defaultCallback');
+	}
+
+	function setRegisterPaymentType(r) {
+		printResult('setRegisterPaymentType', '');
+		OcbCashbeeJS.setRegisterPaymentType('CashbeeObject.defaultCallback', r);
+	}
+
+	function getDeductionUrl() {
+		printResult('getDeductionUrl', '');
+		OcbCashbeeJS.getDeductionUrl('CashbeeObject.defaultCallback', '123456789098');
+    }
+
+    function getReceivedGiftItemInfo() {
+        printResult('getReceivedGiftItemInfo', '');
+        OcbCashbeeJS.getReceivedGiftItemInfo('CashbeeObject.defaultCallback', '01', '1234');
+    }
+    
+    function chargeBalanceByGiftItem() {
+        printResult('chargeBalanceByGiftItem', '');
+        OcbCashbeeJS.chargeBalanceByGiftItem('CashbeeObject.defaultCallback', 2000, '1234');
+    }
+
+    function getReceivedGiftBox() {
+        printResult('getReceivedGiftBox', '');
+        OcbCashbeeJS.getReceivedGiftBox('CashbeeObject.defaultCallback');
+	}
+
+    function setGiftSend() {
+        printResult('setGiftSend', '');
+        OcbCashbeeJS.setGiftSend('CashbeeObject.defaultCallback', 5000, '01012345678', '12345');
+	}
+
+	function deleteCashbeeService() {
+		OcbCashbeeJS.deleteCashbeeService('CashbeeObject.defaultCallback');
+		printResult('deleteCashbeeService', 'ok');
+	}
+
+
+	CashbeeObject.resultCallbackBOff = function(code,  msg) {
+	    var message = "code = " + code + ", msg = " + msg;
+		console.log("callback called " + message);
+		printResult('setAutoChargeSettingOff', message);
+	}
+
+	CashbeeObject.resultCallbackBOn = function(code,  msg) {
+	    var message = "code = " + code + ", msg = " + msg;
+		console.log("callback called " + message);
+		printResult('setBalanceNotificationOn', message);
+	}
+
+	function setBalanceNotificationOn() {
+		OcbCashbeeJS.setBalanceNotification('CashbeeObject.resultCallbackBOn', true, 5000);
+		printResult('setBalanceNotificationOn', 'on');
+	}
+
+	function setBalanceNotificationOff() {
+		OcbCashbeeJS.setBalanceNotification('CashbeeObject.resultCallbackBOff',false, 0);
+		printResult('setBalanceNotificationOff', 'off');
+	}
+
+	function getBalanceNotificationAmountBelow() {
+		var below = OcbCashbeeJS.getBalanceNotificationAmountBelow();
+		printResult('getBalanceNotificationAmountBelow', below);
+	}
+
+	function setAutoChargeNotificationOn() {
+		OcbCashbeeJS.setAutoChargeNotification(true);
+		printResult('setAutoChargeNotificationOn', 'on');
+	}
+
+	function setAutoChargeNotificationOff() {
+		OcbCashbeeJS.setAutoChargeNotification(false);
+		printResult('setAutoChargeNotificationOff', 'off');
+	}
+
+	function isEnabledBalanceNotification() {
+		var onoff = OcbCashbeeJS.isEnabledBalanceNotification();
+		printResult('isEnabledBalanceNotification', onoff);
+	}
+
+	function isEnabledAutoChargeNotification() {
+		var onoff = OcbCashbeeJS.isEnabledAutoChargeNotification();
+		printResult('isEnabledAutoChargeNotification', onoff);
+	}
+
+
+	CashbeeObject.resultCallbackOff = function(code,  msg) {
+	    var message = "code = " + code + ", msg = " + msg;
+		console.log("callback called " + message);
+		printResult('setAutoChargeSettingOff', message);
+	}
+
+	CashbeeObject.resultCallbackOn = function(code,  msg) {
+	    var message = "code = " + code + ", msg = " + msg;
+		console.log("callback called " + message);
+		printResult('setAutoChargeSettingOn', message);
+	}
+
+
+	function setAutoChargeSettingOff() {
+		var onoff = OcbCashbeeJS.setAutoChargeSetting('CashbeeObject.resultCallbackOff', false, 0, 0);
+	}
+
+	function setAutoChargeSettingOn() {
+		var onoff = OcbCashbeeJS.setAutoChargeSetting('CashbeeObject.resultCallbackOn', true, 5000, 10);
+	}
+
+	function isEnabledAutoChargeSetting() {
+		var onoff = OcbCashbeeJS.isEnabledAutoChargeSetting();
+		printResult('isEnabledAutoChargeSetting', onoff);
+	}
+
+	function getAutoChargeAmountBelow() {
+		var below = OcbCashbeeJS.getAutoChargeAmountBelow();
+		printResult('getAutoChargeAmountBelow', below);
+	}
+
+	function getAutoChargeAmount() {
+		var below = OcbCashbeeJS.getAutoChargeAmount();
+		printResult('getAutoChargeAmount', below);
+	}
+
+	function requestChargeWithOcb() {
+		var r = OcbCashbeeJS.requestChargeWithOcb('CashbeeObject.defaultCallback', 100, 0, 'req', 'checksum', "03");
+		printResult('requestChargeWithOcb', r);
+    }
+
+	function requestChargeWithOcbInternal() {
+		var r = OcbCashbeeJS.requestChargeWithOcbInternal('CashbeeObject.defaultCallback', 100, "00");
+		printResult('requestChargeWithOcbInternal', r);
+	}
+
+	function getId(code) {
+			switch (code) {
+				case CASHBEE_CONST.M_CODE_PAY_OCB_POINT_CHARGE_RESULT:
+					return 'requestChargeWithOcb';
+				case CASHBEE_CONST.M_CODE_DEDUCTION:
+					return 'getDeductionUrl';
+				case CASHBEE_CONST.M_CODE_PAY_MENTE_TYPE:
+					return 'setRegisterPaymentType';
+				case CASHBEE_CONST.M_CODE_TERMS_URL_RESULT:
+					return 'getCashbeeTermsUrl';
+				case CASHBEE_CONST.M_CODE_SERVICE_CENTER_RESULT:
+					return 'getServiceCenter';
+				case CASHBEE_CONST.M_CODE_INFO_PLACE_RESULT:
+					return 'getInfoPlace';
+				case CASHBEE_CONST.M_CODE_MONTHLY_USING_LIST_RESULT:
+					return 'getMonthlyUseList';
+				case CASHBEE_CONST.M_CODE_CARD_TYPE_CHANGE_RESULT:
+					return 'setCardTypeChangeGrade';
+				case CASHBEE_CONST.M_CODE_OWNER_SHIP_RELEASE_RESULT:
+					return 'setOwnerShipRelease';
+				case CASHBEE_CONST.M_CODE_PROVISION_RESULT:
+						return 'setPersonalProvision';
+				case CASHBEE_CONST.M_CODE_INIT_STATUS:
+						return 'initialize';
+				case CASHBEE_CONST.M_CODE_USIM_ISSUE_STATUS:
+						return 'getIssuedStatus';
+				case CASHBEE_CONST.M_CODE_USIM_ISSUE_DELETE_RESULT:
+						return 'delApplet';
+				case CASHBEE_CONST.M_CODE_USIM_ISSUE_1ST_RESULT:
+					return 'issueApplet';
+				case CASHBEE_CONST.M_CODE_USIM_ISSUE_2ST_RESULT:
+					return 'registerPerso';
+				case CASHBEE_CONST.M_CODE_ENABLE_RESULT:
+					return 'setEnable';
+				case CASHBEE_CONST.M_CODE_RECENT_USING_RESULT:
+						return 'getRecentUsingList';
+				case CASHBEE_CONST.M_CODE_CARD_INFO_RESULT:
+						return 'getCardInfo';
+				case CASHBEE_CONST.M_CODE_USER_INFO_LOOKUP_RESULT:
+						return 'getUserInfoLookup';
+				case CASHBEE_CONST.M_CODE_OWNER_SHIP_REGISTER_RESULT:
+						return 'setRegistrationOwnerShip';
+				case CASHBEE_CONST.M_CODE_AUTO_CHARGE_RELEASE_RESULT:
+                        return 'setAutoChargeRelease';
+				case CASHBEE_CONST.M_CODE_RECEIVED_GIFT_ITEM_INFO_RESULT:
+                        return 'getReceivedGiftItemInfo';
+				case CASHBEE_CONST.M_CODE_CHARGE_BALANCE_BY_GIFT_ITEM:
+                        return 'chargeBalanceByGiftItem';
+                case CASHBEE_CONST.M_CODE_RECEIVED_GIFTBOX_RESULT:
+                		return 'getReceivedGiftBox';
+                case CASHBEE_CONST.M_CODE_GIFT_SEND_RESULT:
+                		return 'setGiftSend';
+				default:
+						return 'unknown';
+			}
+			return 'unknown';
+	}
+
+	function goTest() {
+		location.href = "ocbt://com.skmc.okcashbag.home_google/cashbeeSetting";
+	}
+
+	function goEtcflow() {
+		window.location="main.html"
+	}
+
+</script>
+</head>
+
+<body>
+<table>
+
+	<tr>
+		<td><div><a href="javascript:goTest()">go cashbee setting  </a></div></td>
+		<td id="goTest">&nbsp;</td>
+	</tr>
+	<tr>
+		<td><div><a href="javascript:goEtcflow()">go etc flow  </a></div></td>
+		<td id="goEtcflow">&nbsp;</td>
+	</tr>
+	<tr>
+	<td><div><a href="javascript:initialize()">initialize</a></div></td>
+	<td id="initialize">&nbsp;</td>
+	</tr>
+
+	<tr>
+	<td><div><a href="javascript:getIssuedStatus()">getIssuedStatus</a></div></td>
+	<td id="getIssuedStatus">&nbsp;</td>
+	</tr>
+
+	<tr>
+	<td><div><a href="javascript:issueApplet()">issueApplet</a></div></td>
+	<td id="issueApplet">&nbsp;</td>
+	</tr>
+
+	<tr>
+	<td><div><a href="javascript:setEnable()">setEnable</a></div></td>
+	<td id="setEnable">&nbsp;</td>
+	</tr>
+
+	<tr>
+	<td><div><a href="javascript:registerPerso()">registerPersos</a></div></td>
+	<td id="registerPerso">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getCardInfo()">getCardInfo</a></div></td>
+		<td id="getCardInfo">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getRecentUsingList()">getRecentUsingList</a></div></td>
+		<td id="getRecentUsingList">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getUserInfoLookup()">getUserInfoLookup</a></div></td>
+		<td id="getUserInfoLookup">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:setRegistrationOwnerShip()">setRegistrationOwnerShip</a></div></td>
+		<td id="setRegistrationOwnerShip">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:setAutoChargeRelease()">setAutoChargeRelease</a></div></td>
+		<td id="setAutoChargeRelease">&nbsp;</td>
+	</tr>
+	<!-- -->
+	<tr>
+		<td><div><a href="javascript:setOwnerShipRelease()">setOwnerShipRelease</a></div></td>
+		<td id="setOwnerShipRelease">&nbsp;</td>
+	</tr>
+
+
+	<tr>
+		<td><div><a href="javascript:setCardTypeChangeBirthDay()">setCardTypeChangeBirthDay</a></div></td>
+		<td id="setCardTypeChangeBirthDay">&nbsp;</td>
+	</tr>
+
+
+	<tr>
+		<td><div><a href="javascript:setCardTypeChangeGrade()">setCardTypeChangeGrade</a></div></td>
+		<td id="setCardTypeChangeGrade">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getMonthlyUseList()">getMonthlyUseList</a></div></td>
+		<td id="getMonthlyUseList">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getInfoPlace()">getInfoPlace </a></div></td>
+		<td id="getInfoPlace">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getInfoPlaceText()">getInfoPlaceText </a></div></td>
+		<td id="getInfoPlaceText">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getServiceCenter()">getServiceCenter </a></div></td>
+		<td id="getServiceCenter">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getCashbeeTermsUrl()">getCashbeeTermsUrl </a></div></td>
+		<td id="getCashbeeTermsUrl">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:setRegisterPaymentType('Y')">setRegisterPaymentType Y</a></div></td>
+		<td id="setRegisterPaymentType">&nbsp;</td>
+	</tr>
+
+		<tr>
+		<td><div><a href="javascript:setRegisterPaymentType('N')">setRegisterPaymentType N</a></div></td>
+		<td id="setRegisterPaymentType">&nbsp;</td>
+	</tr>
+	<tr>
+	<td><div><a href="javascript:getDeductionUrl()">getDeductionUrl </a></div></td>
+	<td id="getDeductionUrl">&nbsp;</td>
+	</tr>
+
+	<tr>
+	<td><div><a href="javascript:setPersonalProvision()">setPersonalProvision </a></div></td>
+	<td id="setPersonalProvision">&nbsp;</td>
+	</tr>
+
+    <tr>
+	<td><div><a href="javascript:getReceivedGiftItemInfo()">getReceivedGiftItemInfo </a></div></td>
+	<td id="getReceivedGiftItemInfo">&nbsp;</td>
+	</tr>
+
+    <tr>
+	<td><div><a href="javascript:chargeBalanceByGiftItem()">chargeBalanceByGiftItem</a></div></td>
+	<td id="chargeBalanceByGiftItem">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getReceivedGiftBox()">getReceivedGiftBox</a></div></td>
+		<td id="getReceivedGiftBox">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:setGiftSend()">setGiftSend</a></div></td>
+		<td id="setGiftSend">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:delApplet()">delApplet </a></div></td>
+		<td id="delApplet">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:setBalanceNotificationOn()">setBalanceNotification(On) </a></div></td>
+		<td id="setBalanceNotificationOn">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:setBalanceNotificationOff()">setBalanceNotification(Off) </a></div></td>
+		<td id="setBalanceNotificationOff">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:isEnabledBalanceNotification()">isEnabledBalanceNotification </a></div></td>
+		<td id="isEnabledBalanceNotification">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getBalanceNotificationAmountBelow()">getBalanceNotificationAmountBelow </a></div></td>
+		<td id="getBalanceNotificationAmountBelow">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:setAutoChargeNotificationOn()">setAutoChargeNotification(On) </a></div></td>
+		<td id="setAutoChargeNotificationOn">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:setAutoChargeNotificationOff()">setAutoChargeNotification(Off) </a></div></td>
+		<td id="setAutoChargeNotificationOff">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:isEnabledAutoChargeNotification()">isEnabledAutoChargeNotification </a></div></td>
+		<td id="isEnabledAutoChargeNotification">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:setAutoChargeSettingOn()">setAutoChargeSetting(On) </a></div></td>
+		<td id="setAutoChargeSettingOn">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:setAutoChargeSettingOff()">setAutoChargeSetting(Off) </a></div></td>
+		<td id="setAutoChargeSettingOff">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getAutoChargeAmountBelow()">getAutoChargeAmountBelow </a></div></td>
+		<td id="getAutoChargeAmountBelow">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:getAutoChargeAmount()">getAutoChargeAmount </a></div></td>
+		<td id="getAutoChargeAmount">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:deleteCashbeeService()">deleteCashbeeService  </a></div></td>
+		<td id="deleteCashbeeService">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:isEnabledAutoChargeSetting()">isEnabledAutoChargeSetting  </a></div></td>
+		<td id="isEnabledAutoChargeSetting">&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><div><a href="javascript:requestChargeWithOcbInternal()">requestChargeWithOcbInternal  </a></div></td>
+		<td id="requestChargeWithOcbInternal">&nbsp;</td>
+	</tr>
+	<tr>
+		<td><div><a href="javascript:requestChargeWithOcb()">requestChargeWithOcb  </a></div></td>
+		<td id="requestChargeWithOcb">&nbsp;</td>
+	</tr>
+	</table>
+</body>
+</html>

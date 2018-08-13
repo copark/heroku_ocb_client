@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<meta name="viewport"
+content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
+<head>
+    <style>
+    table,th,td {
+       border: 1px solid black;
+   }
+
+   input[type="text"] {
+       min-width: 200px;
+   }
+</style>
+<title>Java Script Interface Example (v0.2)</title>
+
+<script>
+    // a1
+    function testInit(id) {
+        console.log("called testInit()");
+
+        var s1a = document.getElementById('s1a');
+        var value = s1a.options[s1a.selectedIndex].value;
+        var show = false;
+        if (value == '1') {
+            show = true;
+        }
+        var i1b = document.getElementById('i1b');
+        var title = i1b.value;
+        var s1c = document.getElementById('s1c');
+        var type = s1c.options[s1c.selectedIndex].value;
+
+        OcbTitleViewJS.init(show, title, type);
+    }
+    
+    // a2
+    function testShowWindow(id) {
+        console.log("called testShowWindow()");
+        var select = document.getElementById('s2');
+        var value = select.options[select.selectedIndex].value;
+        var show = false;
+        if (value == '1') {
+            show = true;
+        }
+
+        OcbTitleViewJS.showWindow(show);
+    }
+
+    // a3
+    function testIsShowing(id) {
+        console.log("called testIsShowing()");
+        var ret = OcbTitleViewJS.isShowing();
+        printResult(id, ret);
+    }
+
+    // a4
+    function testSetBackVisibility(id) {
+        console.log("called testSetBackVisibility()");
+        var select = document.getElementById('s4');
+        var value = select.options[select.selectedIndex].value;
+
+        var show = false;
+        if (value == '1') {
+            show = true;
+        }
+        OcbTitleViewJS.setBackVisibility(show);
+    }
+
+    // a5
+    function testGetBackVisibility(id) {
+        console.log("called testGetBackVisibility()");
+        var ret = OcbTitleViewJS.getBackVisibility();
+        printResult(id, ret);
+    }
+
+    // a6
+    function testSetActionType(id) {
+        console.log("called testSetActionType()");
+        var select = document.getElementById('s6');
+        var type = select.options[select.selectedIndex].value;
+        var ret = OcbTitleViewJS.setActionType(type);
+    }
+
+    // a7
+    function testSetTitle(id) {
+        console.log("called testSetTitle()");
+        var input = document.getElementById('i7');
+
+        OcbTitleViewJS.setTitle(input.value);
+    }
+
+    // a8
+    function testGetTitle(id) {
+        console.log("called testGetTitle()");
+        var ret = OcbTitleViewJS.getTitle();
+        printResult(id, ret);
+    }
+
+    // a9
+    function testGetActionType(id) {
+        console.log("called testGetActionType()");
+        var ret = OcbTitleViewJS.getActionType();
+        printResult(id, ret);
+    }
+
+    // a10
+    function testSetBgColor(id) {
+       console.log("called testSetBgColor()");
+       var input = document.getElementById('i10');
+
+       OcbTitleViewJS.setBgColor(input.value);
+    }
+
+    var Register = new Object();
+    Register.onBackButtonListener = function() {
+        OcbAndroidJS.showToast('back clicked');
+    };
+
+    Register.onCloseButtonListener = function() {
+        OcbAndroidJS.showToast('close clicked');
+    };
+
+    // a11
+    function testRegisterBackButtonListener(id) {
+        console.log("called testRegisterBackButtonListener()");
+        var select = document.getElementById('s11');
+        var listener = select.options[select.selectedIndex].value;
+        OcbTitleViewJS.registerBackButtonListener(listener);
+    }
+
+     // a12
+    function testRegisterCloseButtonListener(id) {
+        console.log("called testRegisterCloseButtonListener()");
+        var select = document.getElementById('s12');
+        var listener = select.options[select.selectedIndex].value;
+        OcbTitleViewJS.registerCloseButtonListener(listener);
+    }
+
+     // UTILS
+    function printResult(id, str) {
+        document.getElementById(id).innerHTML = "[result] " + str;
+    }
+
+    function jsonToString(obj) {
+        console.log("called jsonToString");
+        var str = JSON.stringify(obj);
+        console.log("jsonToString:", str);
+        return str;
+    }
+
+    function stringToJson(str) {
+        console.log("called stringToJson");
+        obj = JSON.parse(str);
+        return obj;
+    }
+
+</script>
+</head>
+
+<body>
+    <table>
+        <tr id="a1">
+            <td><a href="javascript:testInit('init')">testInit</a></td>
+            <td id="init">
+                back visible:<select id="s1a">
+                    <option value="1">true</option>
+                    <option value="0">false</option>
+                </select><br>
+                title:<input id="i1b" type="text" value="샘플타이틀"><br>
+                type:<select id="s1c">
+                    <option value="basicCommon">basicCommon</option>
+                    <option value="basicHome">basicHome</option>
+                    <option value="basicClose">basicClose</option>
+                    <option value="menuBox">menuBox</option>
+                </select><br>
+            </td>
+        </tr>
+
+        <tr id="a2">
+            <td><a href="javascript:testShowWindow('showWindow')">testShowWindow</a></td>
+            <td id="showWindow">
+                <select id="s2">
+                    <option value="1">true</option>
+                    <option value="0">false</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr id="a3">
+            <td><a href="javascript:testIsShowing('isShowing')">testIsShowing</a></td>
+            <td id="isShowing">&nbsp;</td>
+        </tr>
+
+        <tr id="a4">
+            <td><a href="javascript:testSetBackVisibility('setBackVisibility')">testSetBackVisibility</a></td>
+            <td id="setBackVisibility">
+                <select id="s4">
+                    <option value="1">true</option>
+                    <option value="0">false</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr id="a5">
+            <td><a href="javascript:testGetBackVisibility('getBackVisibility')">testGetBackVisibility</a></td>
+            <td id="getBackVisibility">&nbsp;</td>
+        </tr>
+
+        <tr id="a6">
+            <td><a href="javascript:testSetActionType('setActionType')">testSetActionType</a></td>
+            <td id="setActionType">
+               <select id="s6">
+                   <option value="basicCommon">basicCommon</option>
+                   <option value="basicHome">basicHome</option>
+                   <option value="basicClose">basicClose</option>
+                   <option value="menuBox">menuBox</option>
+               </select>
+           </td>
+        </tr>
+
+        <tr id="a7">
+            <td><a href="javascript:testSetTitle('setTitle')">testSetTitle</a></td>
+            <td id="setTitle"><input id="i7" type="text" value="샘플타이틀"></td>
+        </tr>
+
+        <tr id="a8">
+            <td><a href="javascript:testGetTitle('getTitle')">testGetTitle</a></td>
+            <td id="getTitle">&nbsp;</td>
+        </tr>
+
+        <tr id="a9">
+            <td><a href="javascript:testGetActionType('getActionType')">testGetActionType</a></td>
+            <td id="getActionType">&nbsp;</td>
+        </tr>
+
+        <tr id="a10">
+            <td><a href="javascript:testSetBgColor('setBgColor')">testSetBgColor</a></td>
+            <td id="setBgColor"> <input id="i10" type="text" value="#FF0000"></td>
+        </tr>
+
+        <tr id="a11">
+            <td><a href="javascript:testRegisterBackButtonListener('registerBackButtonListener')">testRegisterBackButtonListener</a></td>
+            <td id="registerBackButtonListener"> 
+                <select id="s11">
+                   <option value="Register.onBackButtonListener">register</option>
+                   <option value="">unregister</option>
+                </select>
+            </td>
+        </tr>
+
+       <tr id="a12">
+            <td><a href="javascript:testRegisterCloseButtonListener('registerCloseButtonListener')">testRegisterCloseButtonListener</a></td>
+            <td id="registerCloseButtonListener"> 
+                <select id="s12">
+                   <option value="Register.onCloseButtonListener">register</option>
+                   <option value="">unregister</option>
+               </select>
+           </td>
+       </tr>
+  
+    </table>
+</body>
+</html>

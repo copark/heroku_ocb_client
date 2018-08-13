@@ -1,0 +1,2612 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta name="viewport"
+          content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
+    <head>
+        <style>
+table,th,td {
+    border: 1px solid black;
+}
+
+input[type="text"] {
+    min-width: 200px;
+}
+        </style>
+        <title>Java Script Interface Example (v0.2)</title>
+        <!-- <script src="script/OcbAndroidJS.js" charset="utf-8"></script> -->
+        <!-- <script src="script/OcbSearchViewJS.js" charset="utf-8"></script> -->
+        <!-- <script src="script/OcbTitleViewJS.js" charset="utf-8"></script> -->
+
+<script>
+// CALLBACK : BACK KEY
+var OcbKeyDispatcher = new Object();
+OcbKeyDispatcher.mode = "close";
+OcbKeyDispatcher.onBackKey = function() {
+    console.log("callback : OcbKeyDispatcher.onBackKey");
+    if (OcbKeyDispatcher.mode == "close") {
+        OcbAndroidJS.requestCloseWindow();
+    } else {
+        OcbAndroidJS.requestGoBack();
+    }
+};
+
+// CALLBACK : SEARCH KEYWORD
+var SearchViewCallback = new Object();
+SearchViewCallback.onClose = function() {
+    console.log("callback : SearchViewCallback.onClose");
+    printResult('query', 'onClose');
+};
+
+SearchViewCallback.onQueryTextChange = function(newText) {
+    console.log("callback : SearchViewCallback.onQueryTextChange");
+    console.log(newText);
+    printResult('query', 'onQueryTextChange ' + newText);
+};
+
+SearchViewCallback.onQueryTextSubmit = function(query) {
+    console.log("callback :SearchViewCallback.onQueryTextSubmit");
+    console.log(query);
+    printResult('query', 'onQueryTextSubmit ' + query);
+    OcbAndroidJS.showToast(query + " is submitted");
+};
+
+// CALLBACK : PICK CONTACT
+var ContactCallback = new Object();
+ContactCallback.onResult = function(result, contact) {
+    console.log("callback : ContactCallback.onResult");
+    console.log("result = " + result);
+    if (result !== "0") {
+        return;
+    }
+    console.log(contact);
+    var obj = jsonToString(contact);
+    var data = obj.contact;
+
+    printResult('pick', contact);
+    for ( var i in data) {
+        var name = data[i].name;
+        var number = data[i].number;
+        console.log(number);
+    }
+
+};
+
+// CALLBACK : MULTI PICK CONTACT
+ContactCallback.onResultMulti = function(result, contact) {
+
+
+    console.log("callback : ContactCallback.onResultMulti");
+    console.log("result = ", result);
+    if (result !== "0") {
+        return;
+    }
+    console.log(contact);
+    var obj = jsonToString(contact);
+    var data = obj.contact;
+
+    printResult('multipick', contact);
+
+    for ( var i in data) {
+        var name = data[i].name;
+        var number = data[i].number;
+        console.log(number);
+    }
+
+};
+
+ContactCallback.onResult2 = function(result, contact) {
+    console.log("callback : ContactCallback.onResult2");
+    console.log("result = ");
+    console.log(result);
+    if (result !== "0") {
+        return;
+    }
+    console.log(contact);
+    var obj = jsonToString(contact);
+    var data = obj.pick;
+
+    printResult('pickRecently', contact);
+    for ( var i in data) {
+        var name = data[i].name;
+        var number = data[i].number;
+        console.log(number);
+    }
+
+};
+
+// CALBACK : POPUP ACTIONS
+var PopupCallback = new Object();
+PopupCallback.onYes = function() {
+    printResult('popup1', 'button clicked');
+
+};
+
+var PopupCallback2 = new Object();
+PopupCallback2.onYes = function() {
+    printResult('popup2', 'yes clicked');
+
+};
+
+PopupCallback2.onNo = function() {
+    printResult('popup2', 'no clicked');
+
+};
+
+var GisPopupCallback = new Object();
+GisPopupCallback.onYes = function() {
+    printResult('gispopup', 'yes clicked');
+
+};
+
+GisPopupCallback.onNo = function() {
+    printResult('gispopup', 'no clicked');
+
+};
+
+var HeaderPopupCallback = new Object();
+HeaderPopupCallback.onYes = function() {
+    printResult('header1', 'button clicked');
+
+};
+
+var HeaderPopupCallback2 = new Object();
+HeaderPopupCallback2.onYes = function() {
+    printResult('header2', 'yes clicked');
+
+};
+
+HeaderPopupCallback2.onNo = function() {
+    printResult('header2', 'no clicked');
+
+};
+
+// CALLBACK : REQUEST STUFF
+// REQUEST_RESULT_OK = 0;
+// REQUEST_RESULT_CANCEL = 1;
+// REQUEST_RESULT_ERROR = 2;
+var OcbActivityResult = new Object();
+
+OcbActivityResult.onCurrentLocationResult = function(result, data) {
+    if (result == '0') {
+        // ok
+        alert("success");
+        console.log(data);
+        printResult('currentLocation', 'success' + data);
+    } else if (result == '1') {
+        // user cancel
+        alert("cancel");
+        console.log("cancle");
+    } else {
+        alert("error");
+        console.log("error");
+    }
+};
+
+OcbActivityResult.onChangeLocationResult = function(result, data) {
+    if (result == '0') {
+        // ok
+        alert("success");
+        console.log(data);
+    } else if (result == '1') {
+        // user cancel
+        alert("cancel");
+        console.log("cancle");
+    } else {
+        alert("error");
+        console.log("error");
+    }
+};
+
+OcbActivityResult.onConfirmPasswordResult = function(result) {
+    if (result == '0') {
+        // ok
+        alert("success");
+        console.log("success");
+    } else if (result == '1') {
+        // user cancel
+        alert("cancel");
+        console.log("cancle");
+    } else {
+        alert("error");
+        console.log("error");
+    }
+};
+
+OcbActivityResult.onConfirmAppPasswordResult = function(result) {
+    if (result == '0') {
+        // ok
+        alert("success");
+        console.log("success");
+    } else if (result == '1') {
+        // user cancel
+        alert("cancel");
+        console.log("cancle");
+    } else {
+        alert("error");
+        console.log("error");
+    }
+};
+
+OcbActivityResult.onPinSetResult = function(result) {
+    if (result == '0') {
+        // ok
+        alert("success");
+        console.log("success");
+    } else if (result == '1') {
+        // user cancel
+        alert("cancel");
+        console.log("cancle");
+    } else {
+        alert("error");
+        console.log("error");
+    }
+};
+
+// END
+var PermissionCallback = new Object();
+PermissionCallback.onRequestPermissionResult = function(result, permission) {
+    printResult('grantResults', permission);
+};
+
+// UTILS
+function printResult(id, str) {
+    document.getElementById(id).innerHTML = "[result] " + str;
+}
+
+function jsonToString(obj) {
+    console.log("called jsonToString");
+    var str = JSON.stringify(obj);
+    console.log("jsonToString:", str);
+    return str;
+}
+
+function stringToJson(str) {
+    console.log("called stringToJson");
+    obj = JSON.parse(str);
+    return obj;
+}
+
+// TESTCASES
+function testGetMdn(id) {
+    console.log("called testGetMdn()");
+    var mdn = OcbAndroidJS.getMdn();
+    printResult(id, mdn);
+}
+
+var MdnInfo = new Object();
+MdnInfo.onResult = function(result) {
+    printResult('requestmdn', result);
+}
+
+function testRequestMdn(id) {
+    console.log("called testRequestMdn()");
+    OcbAndroidJS.requestMdn('MdnInfo.onResult');
+}
+
+function testIsInstalledPackage(vid, id) {
+    console.log("called testIsInstalledPackage()");
+    var pkg = document.getElementById(vid).value;
+    console.log("input value: ", pkg);
+    var r = OcbAndroidJS.isInstalledPackage(pkg);
+    printResult(id, r);
+}
+
+function testGetOSInfo(id) {
+    console.log("called testGetOSInfo()");
+    var os = OcbAndroidJS.getOSInfo();
+    // printResult(id, os);
+    var obj = JSON.parse(os);
+    printResult(id, obj.type + " " + obj.version + " " + obj.model + " " + obj.display_width + "x" + obj.display_height);
+}
+
+function testRequestRender(id) {
+    console.log("called testRequestRender()");
+    OcbAndroidJS.requestRender();
+    printResult(id, "requestRender requested");
+}
+
+function testRequestCloseWindow(id) {
+    console.log("called testRequestCloseWindow()");
+    OcbAndroidJS.requestCloseWindow();
+    printResult(id, "requestCloseWindow requested");
+}
+
+function testStartBrowser(vid, id) {
+    console.log("called testStartBrowswer()");
+    var url = document.getElementById(vid).value;
+    console.log("input value: ", url);
+    var headers = jsonToString({
+        "apple-x-type" : "text/html"
+    });
+    OcbAndroidJS.startBrowser(url, headers)
+        printResult(id, "testStartBrowser requested");
+}
+
+function testNavigateWindow(vid, id) {
+    console.log("called testNavigateWindow()");
+    var url = document.getElementById(vid).value;
+    console.log("input value: ", url);
+    var bundle = jsonToString({
+        'title' : '급작스런 이벤트'
+    });
+    var r = OcbAndroidJS.navigateWindow(url, bundle)
+        printResult(id, r);
+}
+
+function testRequestPhoneCall(vid, id) {
+    console.log("called testRequestPhoneCall()");
+    var number = document.getElementById(vid).value;
+    console.log("input value: ", number);
+    var r = OcbAndroidJS.requestPhoneCall(number, 'false');
+    printResult(id, r);
+}
+
+
+var OcbDeliveryCall = new Object();
+OcbDeliveryCall.onResult = function(result) {
+    if (result == '0') {
+        // ok
+        //alert("success");
+        console.log("success");
+    } else if (result == '1') {
+        // user cancel
+        //alert("cancel");
+        console.log("cancle");
+    } else {
+        //alert("error");
+        console.log("error");
+    }
+};
+
+function testRequestDeliveryCall(vid, id) {
+    console.log("called testRequestDeliveryCall()");
+    var number = document.getElementById(vid).value;
+    console.log("input value: ", number);
+
+    // tong, biz, number, callback
+    var r = OcbAndroidJS.requestDeliveryCall('S064291','90014787', number,'OcbDeliveryCall.onResult' ,'true');
+    printResult(id, r);
+}
+
+function testClearWebViewCache(id) {
+    console.log("called testClearWebViewCache()");
+    OcbAndroidJS.clearWebViewCache();
+    printResult(id, "clearWebViewCache requested");
+}
+
+function testClearWebViewHistory(id) {
+    console.log("called testClearWebViewHistory()");
+    OcbAndroidJS.clearWebViewHistory();
+    printResult(id, "clearWebViewHistory requested");
+}
+
+function testGetAppVersion(id) {
+    console.log("called testGetOSInfo()");
+    var os = OcbAndroidJS.getAppVersion();
+    // printResult(id, os);
+    var obj = JSON.parse(os);
+    printResult(id, obj.name + " " + obj.code);
+}
+
+function testGetAppVersionInfo(vid, id) {
+    console.log("called testGetAppVersionInfo");
+    var pkg = document.getElementById(vid).value;
+    var result = OcbAndroidJS.getAppVersionInfo(pkg);
+    printResult(id, result);
+}
+
+function testGetAuthInfo(id) {
+    console.log("called testGetAuthInfo()");
+    var auth = OcbAndroidJS.getAuthInfo();
+    var obj = JSON.parse(auth);
+    printResult(id, obj.auth + "," + obj.type + "," + obj.sessionid + ","
+            + obj.gender);
+}
+
+var AuthInfo = new Object();
+AuthInfo.onResult = function(result) {
+    var obj = JSON.parse(result);
+    //printResult('requestauthinfo', obj.auth + "," + obj.type + "," + obj.sessionid + "," + obj.gender);
+    printResult('requestauthinfo', result);
+}
+
+function testRequestAuthInfo(id) {
+    console.log("called testRequestAuthInfo()");
+    OcbAndroidJS.requestAuthInfo('AuthInfo.onResult');
+}
+
+function testPickContact() {
+    console.log("called testPickContact()");
+    OcbAndroidJS.requestPickContact('ContactCallback.onResult', 'false');
+}
+
+function testPickContactRecently() {
+    console.log("called testPickContactRecently()");
+    OcbAndroidJS.requestRecentlyContactsWindow('ContactCallback.onResult2', 'false');
+}
+
+function testShowPopup(id) {
+    console.log("called testShowPopup()");
+    var popup = jsonToString({
+        "title" : "버튼 하나 팝업",
+        "message" : "메세지를 표시합니다.",
+        "action" : [ {
+            "0" : "Push",
+            "onclick" : "PopupCallback.onYes"
+        } ]
+    });
+    OcbAndroidJS.showPopup(popup);
+    printResult(id, "testShowPopup requested");
+}
+
+function testShowGisAgreePopup(id) {
+    console.log("called testShowGisAgreePopup()");
+    var popup = jsonToString({
+        "action" : [ {
+            "0" : "yes",
+            "onclick" : "GisPopupCallback.onYes"
+        }, {
+            "1" : "no",
+            "onclick" : "GisPopupCallback.onNo"
+        } ]
+    });
+    OcbAndroidJS.showGisAgreePopup(popup);
+    printResult(id, "testShowGisAgreePopup requested");
+}
+
+function testShowPopup2(id) {
+    console.log("called testShowPopup2()");
+    var popup = jsonToString({
+        "title" : "버튼 둘 팝업",
+        "message" : "메세지를 표시합니다.",
+        "action" : [ {
+            "0" : "Yes",
+            "onclick" : "PopupCallback2.onYes"
+        }, {
+            "1" : "No",
+            "onclick" : "PopupCallback2.onNo"
+        } ]
+    });
+    OcbAndroidJS.showPopup(popup);
+    printResult(id, "testShowPopup2 requested");
+}
+
+function testShowHeaderPopup(id) {
+    console.log("called testShowHeaderPopup()");
+    var popup = jsonToString({
+        "title" : "버튼 하나 헤더팝업",
+        "message" : "메세지를 표시합니다.",
+        "action" : [ {
+            "0" : "Push",
+            "onclick" : "HeaderPopupCallback.onYes"
+        } ]
+    });
+    OcbAndroidJS.showHeaderPopup(popup);
+    printResult(id, "testShowHeaderPopup requested");
+}
+
+function testShowHeaderPopup2(id) {
+    console.log("called testShowHeaderPopup2()");
+    var popup = jsonToString({
+        "title" : "버튼 둘 헤더팝업",
+        "message" : "메세지를 표시합니다.",
+        "action" : [ {
+            "0" : "Yes",
+            "onclick" : "HeaderPopupCallback2.onYes"
+        }, {
+            "1" : "No",
+            "onclick" : "HeaderPopupCallback2.onNo"
+        } ]
+    });
+    OcbAndroidJS.showHeaderPopup(popup);
+    printResult(id, "testShowHeaderPopup2 requested");
+}
+
+function testRegisterViewSelectedListener(id) {
+    console.log("called testRegisterListener()");
+    OcbAndroidJS.registerViewSelectedListener("onViewSelected");
+    printResult(id, "testRegisterViewSelectedListener requested");
+}
+
+function testShowLinkifyPopup(id) {
+    console.log("called testShowHeaderPopup2()");
+    var popup = jsonToString({
+        "title" : "링크 팝업",
+        "message" : "자세한 정보는 다음을 방문하세요. \n http://www.google.com",
+        "action" : [ {
+            "0" : "Yes",
+            "onclick" : "HeaderPopupCallback2.onYes"
+        }, {
+            "1" : "No",
+            "onclick" : "HeaderPopupCallback2.onNo"
+        } ]
+    });
+    OcbAndroidJS.showLinkifyPopup(popup);
+    printResult(id, "testShowHeaderPopup2 requested");
+}
+
+function testRegisterListener(id) {
+    console.log("called testRegisterListener()");
+    OcbSearchViewJS.registerListener("SearchViewCallback.onClose",
+            "SearchViewCallback.onQueryTextChange",
+            "SearchViewCallback.onQueryTextSubmit");
+    printResult(id, "testRegisterListener requested");
+}
+
+function testRegisterBackKeyListener(vid, id) {
+    console.log("called testRegisterBackKeyListener()");
+    if (document.getElementsByName(vid).checked == true) {
+        OcbKeyDispatcher.mode = "history";
+    } else {
+        OcbKeyDispatcher.mode = "close";
+    }
+    console.log(OcbKeyDispatcher.mode);
+
+    OcbAndroidJS.registerBackKeyListener('OcbKeyDispatcher.onBackKey');
+    printResult(id, "testRegisterBackKeyListener requested");
+}
+
+function testRequestCurrentLocation(id) {
+    console.log("called testRequestCurrentLocation()");
+    OcbAndroidJS
+        .requestCurrentLocation('OcbActivityResult.onCurrentLocationResult');
+    printResult(id, "testRequestCurrentLocation requested");
+}
+
+function testRequestChangeLocationWindow(id) {
+    console.log("called testRequestChangeLocationWindow()");
+    OcbAndroidJS
+        .requestChangeLocationWindow('OcbActivityResult.onChangeLocationResult');
+    printResult(id, "testRequestChangeLocationWindow requested");
+}
+
+function testRequestConfirmPasswordWindow(id) {
+    console.log("called testRequestConfirmPasswordWindow()");
+    OcbAndroidJS
+        .requestConfirmPasswordWindow('OcbActivityResult.onConfirmPasswordResult');
+    printResult(id, "testRequestConfirmPasswordWindow requested");
+}
+
+function testRequestConfirmAppPasswordWindow(id) {
+    console.log("called testRequestConfirmAppPasswordWindow()");
+    OcbAndroidJS
+        .requestConfirmAppPasswordWindow('OcbActivityResult.onConfirmAppPasswordResult');
+    printResult(id, "testRequestConfirmAppPasswordWindow requested");
+}
+
+function testRequestPinSetWindow(id) {
+    console.log("called testRequestPinSetWindow()");
+    OcbAndroidJS
+        .requestPinSetWindow('OcbActivityResult.onPinSetResult');
+    printResult(id, "testRequestPinSetWindow requested");
+}
+
+function testshowWebViewPopup(id) {
+    console.log("called testshowWebViewPopup()");
+    OcbAndroidJS
+        .showWebViewPopup('http://www.google.com');
+    printResult(id, "testshowWebViewPopup requested");
+}
+
+function testshowBarcodePopup(id) {
+    console.log("called testshowBarcodePopup()");
+    OcbAndroidJS
+        .showBarcodeScanPopup('12345678901234567890');
+    printResult(id, "testshowBarcodePopup requested");
+}
+
+var OcbKeyDispatcher = new Object();
+OcbKeyDispatcher.mode = "close";
+OcbKeyDispatcher.onBackKey = function() {
+    console.log("callback : OcbKeyDispatcher.onBackKey");
+    var checked = document.getElementsByName('backaction')[0].checked;
+    if (checked === true) {
+        OcbAndroidJS.requestGoBack();
+    } else {
+        OcbAndroidJS.requestCloseWindow();
+    }
+};
+
+function testRegisterBackKeyListener(vid, id) {
+    console.log("called testRegisterBackKeyListener()");
+    OcbAndroidJS.registerBackKeyListener('OcbKeyDispatcher.onBackKey');
+    printResult(id, "testRegisterBackKeyListener requested");
+}
+
+var KCPCallback = new Object();
+KCPCallback.onResult = function(result) {
+    console.log("callback : KCPCallback.onResult");
+    console.log("result = ", result);
+    if (result !== "0") {
+        return false;
+    }
+    return true;
+};
+function testPayment(id) {
+    console.log("called testPayment()");
+
+    var url = OcbAndroidJS.getPaymentAppUrl();
+    var orderurl = 'http://testpay.kcp.co.kr/lds/smart_phone_linux_jsp/sample/card/order_card_1.jsp?AppUrl=' + url + "://card_pay";
+    var devgw = "https://devpggw.kcp.co.kr:8100/app.do?ActionResult=app&AppUrl=" + url + "&approval_key="
+        var callbackurl = "http://test.ocbdev.com/ocb5/js_test.html";
+
+    var result = OcbAndroidJS.requestPayment(callbackurl,devgw, 'KCPCallback.onResult');
+
+    printResult(id, result);
+
+    document.location.href=orderurl;
+}
+
+var SearchPostCode = new Object();
+SearchPostCode.onResult = function(result, data) {
+    console.log("callback : SearchPostCode.onResult");
+    console.log("result = ", result);
+    console.log("data = ", data);
+    if (result !== "0") {
+        return;
+    }
+};
+function testPostcode(id) {
+    console.log("called testPayment()");
+
+    var orderurl = 'file:///android_asset/example_history.html';
+
+    OcbAndroidJS.requestPostCode(orderurl, "우편번호 테스트", 'SearchPostCode.onResult');
+    printResult(id, "testPostcode requested");
+
+}
+
+function trackLog() {
+    console.log("called trackLog()");
+    var logstr = jsonToString( '{"action_id":"webView" , "page_id":""/mainTest"}');
+    OcbAndroidJS.trackLog(logstr);
+}
+
+function trackFlush() {
+    console.log("called trackFlush()");
+    OcbAndroidJS.trackFlush();
+}
+
+function agreeOemClause() {
+    console.log("called agreeOemClause()");
+    OcbAndroidJS.agreeOemClause("bdtong");
+}
+
+function isAgreedOemClause() {
+    console.log("called agreeOemClause()");
+    OcbAndroidJS.isAgreedOemClause("bdtong");
+}
+
+function testGetHeader(id) {
+    var r = OcbAndroidJS.getExtensionHeader("all");
+
+    printResult(id,'[all]: '+r);
+    console.log("all");
+    console.log(r);
+    r = OcbAndroidJS.getExtensionHeader("session");
+    console.log("session");
+    console.log(r);
+    r = OcbAndroidJS.getExtensionHeader("agent");
+    console.log("agent");
+    console.log(r);
+    r = OcbAndroidJS.getExtensionHeader("");
+    console.log("invalid");
+    console.log(r);
+
+    var str = '{"action_id":"webView" , "page_id":"/mainTest"}';
+    OcbAndroidJS.trackLog( str );
+}
+
+var RequestHeader = new Object();
+RequestHeader.onResult = function(result) {
+    printResult('requestheader', result);
+}
+
+function testRequestHeader(id) {
+    OcbAndroidJS.requestExtensionHeader("all", 'RequestHeader.onResult');
+}
+
+function requestMultiSelectContactsWindow(cbMultiSelectContactsWindow) {
+    console.log("called requestMultiSelectContactsWindow()");
+    OcbAndroidJS.requestMultiSelectContactsWindow('ContactCallback.onResultMulti');
+}
+
+function testIsBluetoothUseAgreed(id) {
+    console.log("called isBluetoothUseAgreed()");
+    var result = OcbAndroidJS.isBluetoothUseAgreed();
+    printResult(id,result);
+}
+
+function setBluetoothUseAgreed() {
+    console.log("called setBluetoothUseAgreed()");
+
+
+    var select = document.getElementById('s907');
+    var type = select.options[select.selectedIndex].value;
+    if(type == '0') {
+        OcbAndroidJS.setBluetoothUseAgreed(false);
+    }else if(type == '1') {
+        OcbAndroidJS.setBluetoothUseAgreed(true);
+    }
+}
+
+var cbRecentlyContactsWindow = new function() {
+    console.log("called cbRecentlyContactsWindow()")
+}
+
+
+var cbPickResult = new function() {
+    console.log("called cbPickResult()")
+}
+
+// START : LOCKER
+function enableLocker() {
+    console.log("called enableLocker()");
+    var select = document.getElementById('s1000');
+    var type = select.options[select.selectedIndex].value;
+    if(type == '0') {
+        OcbAndroidJS.enableLocker(false);
+    }else if(type == '1') {
+        OcbAndroidJS.enableLocker(true);
+    }
+}
+
+function getLockerInfo(id) {
+    console.log("called getLockerInfo()");
+    var lockerinfo = OcbAndroidJS.getLockerInfo();
+    printResult(id, lockerinfo);
+}
+
+function isEnabledLocker(id) {
+    console.log("called isEnabledLocker()");
+    var isEnabledLocker = OcbAndroidJS.isEnabledLocker();
+    printResult(id, isEnabledLocker);
+}
+
+var OcbMissionCallback = new Object();
+OcbMissionCallback.onResult = function(result) {
+    if (result == '0') {
+        // ok
+        //alert("success");
+        console.log("success");
+    } else if (result == '1') {
+        // user cancel
+        //alert("cancel");
+        console.log("cancle");
+    } else {
+        //alert("error");
+        console.log("error");
+    }
+    printResult('callback', result);
+};
+function requestUpdateMissionWithCallBack(vid) {
+    console.log("called requestUpdateMissionWithCallBack()");
+    var number = document.getElementById(vid).value;
+
+    // mission id, success, reason, point, callback
+    OcbAndroidJS.requestUpdateMissionWithCallBack(number, '1', 'Reason=?','만포인트' ,'OcbDeliveryCall.onResult');
+}
+// END : LOCKER
+
+// START : ADD TOAST
+function showToast(vid) {
+    console.log("called showToast()");
+    var select = document.getElementById('s1100');
+    var type = select.options[select.selectedIndex].value;
+    var text = select.options[select.selectedIndex].text;
+    var message = document.getElementById(vid).value;
+    if(type == '0') {
+        OcbAndroidJS.showToast(message);
+    }else {
+        OcbAndroidJS.showToastWithType(message, text);
+    }
+}
+// END : ADD TOAST
+
+// START : SCROLL
+function requestScrollToTop() {
+    console.log("called requestScrollToTop");
+    OcbAndroidJS.requestScrollToTop();
+}
+
+function requestScrollToContentTop() {
+    console.log("called requestScrollToContentTop");
+    OcbAndroidJS.requestScrollToContentTop();
+}
+
+function requestScrollToBottom() {
+    console.log("called requestScrollToBottom");
+    OcbAndroidJS.requestScrollToBottom();
+}
+
+function showBarcodeAction() {
+    console.log("called showBarcodeAction");
+    OcbAndroidJS.showBarcodeAction("ocbt://com.skmc.okcashbag.home_google/couponSaving");
+}
+
+function hideBarcodeAction() {
+    console.log("called hideBarcodeAction");
+    OcbAndroidJS.hideBarcodeAction();
+}
+
+function getSyrupAdDeviceId(id) {
+    console.log("called getSyrupAdDeviceId");
+    var deviceId = OcbAndroidJS.getSyrupAdDeviceId();
+    printResult(id, deviceId);
+}
+
+function enableScrapOverlay() {
+    console.log("called enableScrapOverlay");
+    var contents = jsonToString({
+        "expectedPoint":"25,000P",
+        "count": "999+"});
+
+    OcbAndroidJS.enableScrapOverlay(contents);
+}
+
+function disableScrapOverlay() {
+    console.log("called disableScrapOverlay");
+    OcbAndroidJS.disableScrapOverlay();
+}
+
+var FeedbackCallBack = new Object();
+FeedbackCallBack.onResult = function(result) {
+    if (result == '0') {
+        // ok
+        //alert("success");
+        console.log("success");
+    } else if (result == '1') {
+        // user cancel
+        //alert("cancel");
+        console.log("cancle");
+    } else {
+        //alert("error");
+        console.log("error");
+    }
+    printResult('ShowFeedbackWithCallback', result);
+};
+
+function requestShowFeedbackWithCallback() {
+    console.log("called requestShowFeedbackWithCallback");
+    var contents = jsonToString({
+        "type":"survey",
+        "win":"1",
+        "title":"축하합니다",
+        "desc": "축하합니다2",
+        "eventId": "12345"});
+    OcbAndroidJS.requestShowFeedbackWithCallback(contents, 'FeedbackCallBack.onResult');
+}
+// END : SCROLL
+
+function testCheckPermission(id) {
+    console.log("called testCheckPermission");
+    var permResult;
+    var select = document.getElementById('s1200');
+    var count = 0;
+    var perms = new Array();
+
+    for (var i = 0; i < select.length; i++) {
+        if (select.options[i].selected) {
+            perms[count++] = select.options[i].value;
+            console.log(select.options[i].value);
+        }
+    }
+    console.log(perms);
+
+
+    if (count == 1) {
+        permResult = OcbAndroidJS.checkPermission(perms[0]);
+    } else {
+        permResult = OcbAndroidJS.checkPermissions(perms);
+    }
+    printResult(id, permResult);
+}
+
+function testRequestPermission() {
+    console.log("called testRequestPermission()");
+
+    var permResult;
+    var select = document.getElementById('s1202');
+    var count = 0;
+    var perms = new Array();
+
+    for (var i = 0; i < select.length; i++) {
+        if (select.options[i].selected) {
+            perms[count++] = select.options[i].value;
+            console.log(select.options[i].value);
+        }
+    }
+    console.log(perms);
+
+    if (count == 1) {
+        OcbAndroidJS.requesetPermission('PermissionCallback.onRequestPermissionResult',
+                perms[0]);
+    } else {
+        OcbAndroidJS.requesetPermissions('PermissionCallback.onRequestPermissionResult',
+                perms);
+    }
+}
+
+function requestStampPopup() {
+    console.log("called requestStampPopup");
+    OcbAndroidJS.requestStampPopup("12345");
+}
+
+function showNotification() {
+    console.log("called showNotification");
+    OcbAndroidJS.showNotification(null, null, null);
+}
+
+function hideNotification() {
+    console.log("called hideNotification");
+    OcbAndroidJS.hideNotification();
+}
+
+
+var PlusAuthWindow = new Object();
+PlusAuthWindow.onResult = function(result, data) {
+    console.log("callback : PlusAuthWindow.onResult");
+    console.log("result = ", result);
+    console.log("data = ", data);
+    if (result !== "0") {
+        return;
+    }
+
+    printResult('plusauth', "requestPlushAuthWinodw requested");
+};
+
+function requestPlusAuthWindow(id) {
+    console.log("called requestPlusAuthWindow()");
+
+    OcbAndroidJS.requestPlusAuthWindow('', 'PlusAuthWindow.onResult');
+    printResult(id, "requestPlusAuthWindow requested");
+
+}
+
+function testGetAuthInfoExtras(id) {
+    console.log("called testGetAuthInfoExtras");
+    var select = document.getElementById('authinfoFields');
+    var count = 0;
+    var fields = "";
+
+    for (var i = 0; i < select.length; i++) {
+        if (select.options[i].selected) {
+            if (i != 0) fields += " ";
+            fields += select.options[i].value;
+            console.log(select.options[i].value);
+        }
+    }
+
+    var auth = OcbAndroidJS.getAuthInfoExtras(fields);
+
+    printResult(id, auth);
+}
+
+var AuthInfoExtras = new Object();
+AuthInfoExtras.onResult = function(result) {
+    printResult('requestauthinfoExtras', result);
+}
+
+function testRequestAuthInfoExtras(id) {
+    console.log("called testRequestAuthInfoExtras");
+    var select = document.getElementById('authinfoFields');
+    var count = 0;
+    var fields = "";
+
+    for (var i = 0; i < select.length; i++) {
+        if (select.options[i].selected) {
+            if (i != 0) fields += " ";
+            fields += select.options[i].value;
+            console.log(select.options[i].value);
+        }
+    }
+
+    OcbAndroidJS.requestAuthInfoExtras(fields,'AuthInfoExtras.onResult');
+}
+
+function testAddTextToClipboard(vid, id) {
+    console.log("called testAddTextToClipboard()");
+    var cardNumber = document.getElementById(vid).value;
+    console.log("input card number value: ", cardNumber);
+
+    OcbAndroidJS.addTextToClipboard(cardNumber);
+
+    OcbAndroidJS.showToastWithType("쿠폰 번호가 복사되었습니다.", "alarm");
+}
+
+var WelcomPackage = new Object();
+WelcomPackage.onCallback = function(result, status) {
+    if (result !== "0") {
+        OcbAndroidJS.showToastWithType("실패", "alarm");
+    }
+    OcbAndroidJS.showToastWithType(status, "alarm");
+};
+function requestWelcomePackage(vid, id) {
+    console.log("called requestWelcomePackage()");
+    OcbAndroidJS.requestWelcomePackage('WelcomPackage.onCallback');
+}
+
+var Vungle = new Object();
+Vungle.onCallback = function(result, json) {
+    OcbAndroidJS.showToastWithType(json, "alarm");
+};
+function requestVungleAdWindow(vid, id) {
+    console.log("called requestVungleAdWindow()");
+    OcbAndroidJS.requestVungleAdWindow("", 'Vungle.onCallback');
+}
+
+var OneClick = new Object();
+OneClick.chargeCallback = function(result, amount) {
+    printResult('oneclickcharge', amount);
+}
+
+OneClick.amountCallback = function(result, amount) {
+    printResult('showChargingAmountPopup', amount);
+}
+
+function requestOneClickChargeAuthWindow() {
+    console.log("called requestOneClickChargeAuthWindow");
+    var params = jsonToString({"title": "원클릭으로 충전",
+        "account": "1234567823456789",
+        "bank":"산업은행",
+        'lastcharge': 50000});
+
+    OcbAndroidJS.requestOneClickChargeAuthWindow(params, 'OneClick.chargeCallback');
+}
+
+function showChargingAmountPopup() {
+    console.log("called showChargingAmountPopup");
+    OcbAndroidJS.showChargingAmountPopup('OneClick.amountCallback');
+}
+
+function registerOnResumeCallback(id) {
+    console.log("called registerOnResumeCallback");
+    OcbAndroidJS.registerOnResumeCallback('LifeCycle.onResume');
+    printResult(id, 'registerOnResumeCallback requested');
+}
+
+function registerOnStopCallback(id) {
+    console.log("called registerOnStopCallback");
+    OcbAndroidJS.registerOnStopCallback('LifeCycle.onStop');
+    printResult(id, "registerOnStopCallback requested");
+}
+
+var LifeCycle = new Object();
+LifeCycle.onResume = function() {
+    printResult('LifeCycle.onResume', 'registerOnResumeCallback called');
+}
+
+LifeCycle.onStop = function() {
+    printResult('LifeCycle.onStop', 'registerOnStopCallback called');
+}
+
+function requestKakaoLinkMessage(id) {
+    console.log("called requestKakaoLinkMessage()");
+
+    var selectLink = document.getElementById('linktype');
+    var linkType = selectLink.options[selectLink.selectedIndex].value;
+    var selectButton = document.getElementById('buttontype');
+    var buttonType = selectButton.options[selectButton.selectedIndex].value;
+    var message;
+
+    if(linkType == '0') {
+        if (buttonType == "2") {
+            message = jsonToString({
+                "title" : "OKCashbag 락 친구 추천",
+                "image" : "http://mud-kage.kakao.co.kr/14/dn/btqb9rFG3H5/esjGPSigv4Gv2qokXyTbGK/o.jpg",
+                "width" : "300",
+                "height" : "200",
+                "action" : [ {
+                    "type" : "0",
+                    "title" : "App Link",
+                    "param" : "testParmam",
+                    "pcurl" : "http://www.okcashbag.com/life/event/eventHome.do",
+                },{
+                    "type" : "2",
+                    "title" : "App Button",
+                    "param" : "testParmam",
+                    "pcurl" : "http://www.okcashbag.com/life/event/eventHome.do",
+                }
+                ],
+                "referrer" : "OCBAPP_00001"});
+        } else {
+            message = jsonToString({
+                "title" : "OKCashbag 락 친구 추천",
+                "image" : "http://mud-kage.kakao.co.kr/14/dn/btqb9rFG3H5/esjGPSigv4Gv2qokXyTbGK/o.jpg",
+                "width" : "300",
+                "height" : "200",
+                "action" : [ {
+                    "type" : "0",
+                    "title" : "App Link",
+                    "param" : "testParmam",
+                    "pcurl" : "http://www.okcashbag.com/life/event/eventHome.do",
+                },{
+                    "type" : "3",
+                    "title" : "Web Button",
+                    "pcurl" : "http://www.okcashbag.com/life/event/eventHome.do",
+                    "weburl" : "http://www.okcashbag.com/index.do"
+                }
+                ],
+                "referrer" : "OCBAPP_00001"});
+        }
+    } else if(linkType == '1') {
+        if (buttonType == "2") {
+            message = jsonToString({
+                "title" : "OKCashb ag 락 친구 추천",
+                "image" : "http://mud-kage.kakao.co.kr/14/dn/btqb9rFG3H5/esjGPSigv4Gv2qokXyTbGK/o.jpg",
+                "width" : "300",
+                "height" : "200",
+                "action" : [ {
+                    "type" : "1",
+                    "title" : "Web Link",
+                    "pcurl" : "http://www.okcashbag.com/life/event/eventHome.do",
+                    "weburl" : "http://www.okcashbag.com/index.do"
+                },{
+                    "type" : "2",
+                    "title" : "APP Button",
+                    "param" : "testParmam",
+                    "pcurl" : "http://www.okcashbag.com/life/event/eventHome.do",
+                }
+                ],
+                "referrer" : "OCBAPP_00001"});
+        } else {
+            message = jsonToString({
+                "title" : "OKCashbag 락 친구 추천",
+                "image" : "http://mud-kage.kakao.co.kr/14/dn/btqb9rFG3H5/esjGPSigv4Gv2qokXyTbGK/o.jpg",
+                "width" : "300",
+                "height" : "200",
+                "action" : [ {
+                    "type" : "1",
+                    "title" : "Web Link",
+                    "pcurl" : "http://www.okcashbag.com/life/event/eventHome.do",
+                    "weburl" : "http://www.okcashbag.com/index.do"
+                },{
+                    "type" : "3",
+                    "title" : "Web Button",
+                    "pcurl" : "http://www.okcashbag.com/life/event/eventHome.do",
+                    "weburl" : "http://www.okcashbag.com/index.do"
+                }
+                ],
+                "referrer" : "OCBAPP_00001"});
+        }
+    }
+
+    var r = OcbAndroidJS.requestKakaoLinkMessage(message);
+    printResult(id, r);
+}
+
+var EditPopupCallback = new Object();
+EditPopupCallback.onYes = function(input) {
+    printResult('editpopup', 'yes clicked');
+    console.log("input = " + input);
+};
+
+EditPopupCallback.onNo = function() {
+    printResult('editpopup', 'no clicked');
+};
+
+function testShowEditPopup(id) {
+    console.log("called testShowEditPopup()");
+
+    var editInput = document.getElementById('inputtype');
+    var inputType = editInput.options[editInput.selectedIndex].value;
+
+    var popup = jsonToString({
+        "message" : "추천인 코드를 입력 해주세요..",
+        "inputtype" : inputType,
+        "action" : [ {
+            "0" : "Yes",
+            "onclick" : "EditPopupCallback.onYes"
+        }, {
+            "1" : "No",
+            "onclick" : "EditPopupCallback.onNo"
+        } ]
+    });
+    OcbAndroidJS.showEditPopup(popup);
+    printResult(id, "testShowEditPopup requested");
+}
+
+function requestPushState(id) {
+    console.log("called requestPushState()");
+
+    var select = document.getElementById('pushStateFields');
+    var count = 0;
+    var fields = "";
+
+    for (var i = 0; i < select.length; i++) {
+        if (select.options[i].selected) {
+            if (i != 0) fields += " ";
+            fields += select.options[i].value;
+            console.log(select.options[i].value);
+        }
+    }
+    var pushState = false;
+    var push = OcbAndroidJS.requestPushState(fields);
+    var pushJson = JSON.parse(push, function(key, value){
+
+        if (key == 'push_all_state' && !value) {
+            console.log(key);
+            console.log(value);
+            pushState = true;
+        }
+
+        if (key == 'push_benefit_state' && !value) {
+            pushState = true;
+        }
+        if (pushState) {
+            var headers = jsonToString({
+                "apple-x-type" : "text/html"
+            });
+            OcbAndroidJS.startBrowser("ocbt://com.skmc.okcashbag.home_google/pushSetting", headers);
+            return;
+        }
+    });
+
+    printResult(id, push);
+}
+
+var ChargingAmountCallback = new Object();
+ChargingAmountCallback.onCallback = function(result, amount) {
+    printResult('chargeamount', result + ", amount=" + amount);
+};
+
+function showChargingAmountPopup(id) {
+    console.log("called showChargingAmountPopup()");
+    OcbAndroidJS.showChargingAmountPopup('ChargingAmountCallback.onCallback');
+}
+
+var OneClickChargeCallback = new Object();
+OneClickChargeCallback.onCallback = function(result, amount) {
+    printResult('oneclickcharge', result + ", amount=" + amount);
+};
+
+//setAgreedGisClause
+var SetAgreedGisClause = new Object();
+SetAgreedGisClause.onCallback = function(result) {
+    printResult('setAgreedGisClause', result);
+};
+function setAgreedGisClause(vid, id) {
+    console.log("called setAgreedGisClause()");
+    OcbAndroidJS.setAgreedGisClause(true, 'SetAgreedGisClause.onCallback');
+}
+
+function isAgreedLockerClause(id) {
+    console.log("called isAgreedLockerClause()");
+    var r = OcbAndroidJS.isAgreedLockerClause();
+    printResult(id, r);
+}
+
+// setAgreedLockerClause
+var TestSetAgreedLockerClause = new Object();
+TestSetAgreedLockerClause.onCallback = function(b) {
+    printResult('setAgreedLockerClauseResult' ,b+'로 설정 완료 // callback');
+};
+
+function testSetAgreedLockerClause(optionId) {
+    console.log("called testSetAgreedLockerClause()");
+    var select = document.getElementById(optionId);
+    var type = select.options[select.selectedIndex].value;
+    if(type == '0') {
+        OcbAndroidJS.setAgreedLockerClause(false, "TestSetAgreedLockerClause.onCallback(false)");
+    }else if(type == '1') {
+        OcbAndroidJS.setAgreedLockerClause(true, 'TestSetAgreedLockerClause.onCallback(true)');
+    }
+};
+
+function getAndroidID(id) {
+    console.log("called getAndroidID()");
+
+    var r = OcbAndroidJS.getAndroidID();
+
+    printResult(id, r);
+
+}
+
+function getAdvertiseID(id) {
+    console.log("called getAdvertiseID()");
+
+    var r = OcbAndroidJS.getAdvertiseID();
+
+    printResult(id, r);
+
+}
+
+var ErrorPopupCallback = new Object();
+ErrorPopupCallback.onYes = function() {
+    printResult('errorpopup', 'yes clicked');
+
+};
+
+function showErrorPopup(id) {
+    console.log("called showErrorPopup()");
+    var popup = jsonToString({
+        "code" : "AA3333",
+        "message" : "에러 메세지를 표시합니다.",
+        "action" : [ {
+            "0" : "yes",
+            "onclick" : "ErrorPopupCallback.onYes"
+        }]
+    });
+    OcbAndroidJS.showErrorPopup(popup);
+    printResult(id, "showErrorPopup requested");
+}
+
+function testSendSMS(vid, id) {
+    console.log("called testSendSMS()");
+    var message = document.getElementById(vid).value;
+    console.log("input message value: ", message);
+
+    var r = OcbAndroidJS.sendSMS(message);
+    printResult(id, r);
+}
+
+var ViewPopupCallback = new Object();
+ViewPopupCallback.onClosed = function() {
+    printResult('viewpopup', 'page closed');
+}
+
+function requestWebviewPopup(id) {
+    console.log("called requestWebviewPopup()");
+    OcbAndroidJS.requestWebviewPopup("http://www.google.com", 'ViewPopupCallback.onClosed');
+    printResult(id, "requestWebviewPopup requested");
+}
+
+function isAgreedBenefitClause(id){
+    console.log("called isAgreedBenefitClause()");
+    var r=OcbAndroidJS.isAgreedBenefitClause();
+    printResult(id,r);
+}
+
+var TestSetAgreedBenefitClause = new Object();
+TestSetAgreedBenefitClause.onCallback = function(b) {
+    printResult('setAgreedBenefitClauseResult',b+' 로 설정 완료 // callback');
+};
+
+function testSetAgreedBenefitClause(optionId) {
+    console.log("called testSetAgreedBenefitClause()");
+    var select = document.getElementById(optionId);
+    var type = select.options[select.selectedIndex].value;
+    if(type == '0') {
+        OcbAndroidJS.setAgreedBenefitClause(false, 'TestSetAgreedBenefitClause.onCallback(false)');
+    }else if(type == '1') {
+        OcbAndroidJS.setAgreedBenefitClause(true, 'TestSetAgreedBenefitClause.onCallback(true)');
+    }
+}
+
+function requestWithdrawal(id) {
+    console.log("called requestWithdrawal");
+    OcbAndroidJS.requestWithdrawal();
+    println(id, "called");
+}
+
+function requestAppFinish(id) {
+    console.log("called requestAppFinish");
+    OcbAndroidJS.requestAppFinish();
+    println(id, "called");
+}
+
+function isEmpty(s) {
+	return (!s || 0 === s.length)
+}
+
+var LockerDirect = new Object();
+LockerDirect.onCallback = function(resultCode, extraMessage) {
+	  res =  resultCode + "," + extraMessage
+    printResult('registerLockerDirect', res);
+		if (resultCode == 0) {
+			// success
+			return
+		}
+	  if (resultCode == 2) {
+			// error
+			msg = !isEmpty(extraMessage) ? alert(extraMessage) : alert("failed empty")
+		}
+}
+
+function registerLockerDirect(id) {
+    console.log("called registerLockerDirect");
+    OcbAndroidJS.registerLockerDirect('LockerDirect.onCallback');
+}
+
+var SmsReceiveObject = new Object();
+SmsReceiveObject.onReceive = function(code) {
+    printResult('registerSmsReceive', code);
+}
+
+function registerSmsReceive(id) {
+    console.log("called registerSmsReceive");
+    OcbAndroidJS.registerSmsReceive('SmsReceiveObject.onReceive');
+    printResult(id, "registered");
+}
+
+var UnLockerDirect = new Object();
+UnLockerDirect.onCallback = function(resultCode, extraMessage) {
+	  res =  resultCode + "," + extraMessage
+    printResult('unRegisterLockerDirect', res);
+		if (resultCode == 0) {
+			// success
+			return
+		}
+
+	  if (resultCode == 2) {
+			// error
+			msg = !isEmpty(extraMessage) ? alert(extraMessage) : alert("failed empty")
+		}
+}
+
+function unRegisterLockerDirect(id) {
+	console.log("called unRegisterLockerDirect");
+  OcbAndroidJS.unRegisterLockerDirect('UnLockerDirect.onCallback');
+}
+
+function updateFavorites(vid, id) {
+    console.log("called updateFavorites()");
+    var cnt = document.getElementById(vid).value;
+    console.log( cnt);
+		var m = 'sent ' + cnt
+   OcbAndroidJS.updateFavorites(parseInt(cnt));
+   printResult('updateFavorites', m);
+}
+
+function testRequestFullScreen(optionId) {
+    var select = document.getElementById(optionId);
+    var type = select.options[select.selectedIndex].value;
+
+    console.log("called testRequestFullScreen() type = " + type)
+    if(type == '1') {
+        OcbAndroidJS.requestFullScreen(true);
+    }else if(type == '0') {
+        OcbAndroidJS.requestFullScreen(false);
+    }
+
+    printResult('requestFullScreen', type);
+}
+
+function availableLockerService(id) {
+    console.log("called availableLockerService");
+    var r = OcbAndroidJS.availableLockerService();
+    printResult(id, r);
+}
+
+var KmcObject = new Object();
+KmcObject.onResult = function(code, message) {
+    res = code + ", " + message;
+    printResult('requestKmcAuthWindow', res);
+}
+
+function requestKmcAuthWindow(id) {
+    console.log("called requestKmcAuthWindow");
+    OcbAndroidJS.requestKmcAuthWindow('KmcObject.onResult');
+}
+
+var OcbCardObject = new Object();
+OcbCardObject.onResult = function(code, message) {
+    res = code + ", " + message;
+    printResult('requestOcbCardAuthWindow', res);
+}
+
+function requestOcbCardAuthWindow(id) {
+    console.log("called requestOcbCardAuthWindow");
+    OcbAndroidJS.requestOcbCardAuthWindow('OcbCardObject.onResult');
+}
+
+var ARSettingResult = new Object();
+ARSettingResult.onResult = function(result) {
+    printResult('arsettings', result);
+}
+function testRequestARSettings(id) {
+    console.log("called testRequestARSettings()");
+    OcbAndroidJS.requestARSettings("ARSettingResult.onResult");
+}
+
+var ARWindow = new Object();
+ARWindow.onResult = function(code, message) {
+    res = code + ", " + message;
+    printResult('requestar', res);
+}
+
+function testRequestARWindow(id) {
+    console.log("called testRequestARWindow()");
+    var arInfo = jsonToString({
+        "wgsX" : "127.103293",
+        "wgsY" : "37.402916",
+        "eventId" : "1000",
+        "mid" : "11111111"
+    });
+    OcbAndroidJS.requestARWindow(arInfo, 'ARWindow.onResult');
+}
+
+function testRequestARWindowClose(id) {
+    console.log("called testRequestARWindowClose()");
+    OcbAndroidJS.requestCloseWindow();
+    OcbAndroidJS.requestARWindowClose(0, "성공");
+}
+
+function requestMainUpdate(id) {
+    console.log("called requestMainUpdate");
+    OcbAndroidJS.requestMainUpdate();
+    printResult('requestMainUpdate', "called");
+}
+
+var OnDemand = new Object();
+OnDemand.onResult = function(result, json) {
+    res = result + ", " + json;
+    printResult('ondemand', res);
+}
+
+function testRequestOnDemand(id) {
+    console.log("called testRequestOnDemand()");
+
+    var reqTypeInput = document.getElementById('reqType');
+    var reqType = reqTypeInput.options[reqTypeInput.selectedIndex].value;
+    OcbAndroidJS.requestOnDemand(reqType, 'OnDemand.onResult');
+}
+
+var CardIssueResult = new Object();
+CardIssueResult.onResult = function(result) {
+    printResult('requestIssueCard', result);
+}
+
+function testRequestIssueCard(id) {
+    console.log("called requestIssueCard()");
+    OcbAndroidJS.requestIssueCard('CardIssueResult.onResult', "code", "params");
+}
+
+var UpdateSessionResult = new Object();
+UpdateSessionResult.onResult = function(result, data) {
+    printResult('requestUpdateSession', result + ", " + data);
+}
+
+function testRequestUpdateSession() {
+    console.log("called requestIssueCard()");
+    OcbAndroidJS.requestUpdateSession('UpdateSessionResult.onResult');
+}
+
+var SystemLoctionSettingResult = new Object();
+SystemLoctionSettingResult.onResult = function(result) {
+    printResult('requestSystemLocation', result);
+}
+
+function testRequestSystemLocationSetting() {
+    console.log("called testRequestSystemLocationSetting()");
+    OcbAndroidJS.requestSystemLocationSetting('SystemLoctionSettingResult.onResult');
+}
+
+var Payco = new Object();
+Payco.chargeCallback = function(result, amount) {
+    printResult('requestPaycoChargeAuthWindow', amount);
+}
+
+function requestPaycoChargeAuthWindow() {
+    console.log("called requestPaycoChargeAuthWindow");
+    var params = jsonToString({'lastcharge':100000});
+    OcbAndroidJS.requestPaycoChargeAuthWindow(params, 'Payco.chargeCallback');
+}
+
+function requestPaycoChargeAuthWindow2() {
+    console.log("called requestPaycoChargeAuthWindow");
+    var params = jsonToString({'amountlist': [20000, 30000, 40000, 50000], 'lastcharge':50000});
+    OcbAndroidJS.requestPaycoChargeAuthWindow(params, 'Payco.chargeCallback');
+}
+
+function requestPaycoChargeAuthWindow3() {
+    console.log("called requestPaycoChargeAuthWindow");
+    var params = jsonToString({'amountlist': [150000, 200000, 250000, 300000, 350000], 'lastcharge':300000});
+    OcbAndroidJS.requestPaycoChargeAuthWindow(params, 'Payco.chargeCallback');
+}
+
+function requestPaycoChargeAuthWindow4() {
+    console.log("called requestPaycoChargeAuthWindow");
+    var params = jsonToString({'amountlist': [150000, 200000, 250000, 300000, 350000, 400000], 'lastcharge':200000});
+    OcbAndroidJS.requestPaycoChargeAuthWindow(params, 'Payco.chargeCallback');
+}
+
+var EmailObject = new Object();
+EmailObject.onResult = function(result) {
+    printResult('requestEmailClient', result);
+}
+
+function requestEmailClient(option) {
+    var select = document.getElementById(option);
+    var type = select.options[select.selectedIndex].value;
+
+    console.log("called requestEmailClient() html = " + type)
+
+    var isHtml = (type == '1') ? true : false;
+
+    var header = jsonToString({
+        "to": ["skplanet.developer@gmail.com"],
+        "cc": ["skplanet.developer@gmail.com", "skocbtest@gmail.com"],
+        "bcc": ["skplanet.developer@gmail.com"],
+        "subject" : "[OK캐쉬백] 광고 문의"
+    });
+
+    var body = "[OK캐쉬백] 광고 문의\n아래 정보를 입력하시면 빠른 시간에 답변 드리겠습니다.\n\n* 회사명:\n\n* 담당자명:\n\n* 문의내용:";
+    OcbAndroidJS.requestEmailClient(header, body, isHtml, "EmailObject.onResult");
+}
+
+function requestHorizontalScrollEnable() {
+    console.log("requestHorizontalScrollEnable() ");
+    var select = document.getElementById('setDiableTouch');
+    var type = select.options[select.selectedIndex].value;
+    if(type == '0') {
+        OcbAndroidJS.requestHorizontalScrollEnable(false);
+    }else if(type == '1') {
+        OcbAndroidJS.requestHorizontalScrollEnable(true);
+    }
+}
+
+var Dawin = new Object();
+Dawin.onCallback = function(result, json) {
+    OcbAndroidJS.showToastWithType(json, "alarm");
+};
+function requestDawinAdWindow(vid, id) {
+    console.log("called requestDawinAdWindow()");
+    OcbAndroidJS.requestDawinAdWindow("", 'Dawin.onCallback');
+}
+
+function requestUpdateAdmobAdView(vid, id) {
+    console.log("called requestUpdateAdmobAdView()");
+    OcbAndroidJS.requestUpdateAdmobAdView("test");
+}
+
+function testisLockerMigrated(id) {
+    console.log("called isLockerMigrated()");
+    var r = OcbAndroidJS.isLockerMigrated();
+    printResult(id, r);
+}
+
+var PinStatus = new Object();
+PinStatus.onCallback = function(result, status) {
+    res = result + ", " + status;
+    printResult('requestPinStatus', res);
+};
+
+function testPinStatus(id) {
+    console.log("called requestPinStatus")
+    OcbAndroidJS.requestPinStatus('PinStatus.onCallback')
+}
+
+function requestKakaoLinkMessageV2(vid,id) {
+    console.log("called requestKakaoLinkMessageV2()");
+
+    var customType = document.getElementById(vid).value;
+    console.log("feed type value: ", customType);
+
+    var selectType = document.getElementById('typev2');
+    var feedType = selectType.options[selectType.selectedIndex].value;
+    var message;
+
+    if(feedType == '0') {
+            message = jsonToString({
+                "objectType" : "feed",
+                "content" : {
+                    "title" : "OKCashbag 락 친구 추천",
+                    "link" : {
+                        "executionParams" : "ocbt://com.skmc.okcashbag.home_google/detail/event?title=%EC%9D%B4%EB%B2%A4%ED%8A%B8&url=https%3A%2F%2Fhybrid.okcashbag.com%2Fr2%2Fcontents%2Flist.mocb%3FgroupId%3D13418%26mission_id%3D37373&missionId=37373",
+                        "mobileWebURL" : "life/event/eventContent.mocb?eventId=82551",
+                        "webURL" : "life/event/eventContent.do?eventId=84560"
+                    },
+                    "imageURL" : "http://mud-kage.kakao.co.kr/14/dn/btqb9rFG3H5/esjGPSigv4Gv2qokXyTbGK/o.jpg",
+                    "imageWidth" : "300",
+                    "imageHeight" : "200",
+                },
+                "social" : {
+                        "likeCount" : "10",
+                        "commentCount" : "20",
+                        "sharedCount" : "30"
+                    },
+                "buttons" : [
+                    {
+                        "title" : "웹에서 보기",
+                        "link" : {
+                            "mobileWebURL" : "life/event/eventContent.mocb?eventId=83373",
+                            "webURL" : "index.do"
+                        }
+                    },
+                    {
+                        "title" : "앱에서 보기",
+                        "link" : {
+                            "executionParams" : "ocbt://com.skmc.okcashbag.home_google/detail/event?title=%EC%9D%B4%EB%B2%A4%ED%8A%B8&url=https%3A%2F%2Fevent.okcashbag.com%2Fevent%2FinstantSaveTemplate%2FappContents.mocb%3Fseq%3D5b4c9f88a4922efa2a8f994e426e9361%26mission_id%3D36947&missionId=36947"
+                        }
+                    }
+                ],
+                "referrer":"OCBAPP_MISSION_SHARE"});
+
+    } else if(feedType == '1') {
+            message = jsonToString({
+                "objectType" : "scrap",
+                "scrapUrl" : "http://www.okcashbag.com/life/event/eventContent.do?eventId=76918"
+                });
+    } else if (feedType == '2') {
+        message = jsonToString({
+            "objectType" : customType,
+                "content" : {
+                    "title" : "OKCashbag 락 친구 추천",
+                    "link" : {
+                        "executionParams" : "ocbt://com.skmc.okcashbag.home_google/detail/event?title=%EC%9D%B4%EB%B2%A4%ED%8A%B8&url=https%3A%2F%2Fhybrid.okcashbag.com%2Fr2%2Fcontents%2Flist.mocb%3FgroupId%3D13418%26mission_id%3D37373&missionId=37373",
+                            "mobileWebURL" : "life/event/eventContent.mocb?eventId=82551",
+                            "webURL" : "life/event/eventContent.do?eventId=84560"
+                        },
+                    "imageURL" : "http://mud-kage.kakao.co.kr/14/dn/btqb9rFG3H5/esjGPSigv4Gv2qokXyTbGK/o.jpg",
+                    "imageWidth" : "300",
+                    "imageHeight" : "200",
+                },
+                "social" : {
+                    "likeCount" : "10",
+                        "commentCount" : "20",
+                        "sharedCount" : "30"
+                    },
+                "buttons" : [
+                {
+                    "title" : "웹에서 보기",
+                        "link" : {
+                            "mobileWebURL" : "life/event/eventContent.mocb?eventId=83373",
+                            "webURL" : "index.do"
+                        }
+                },
+                {
+                    "title" : "앱에서 보기",
+                        "link" : {
+                            "executionParams" : "ocbt://com.skmc.okcashbag.home_google/detail/event?title=%EC%9D%B4%EB%B2%A4%ED%8A%B8&url=https%3A%2F%2Fevent.okcashbag.com%2Fevent%2FinstantSaveTemplate%2FappContents.mocb%3Fseq%3D5b4c9f88a4922efa2a8f994e426e9361%26mission_id%3D36947&missionId=36947"
+                        }
+                }],
+                "referrer":"OCBAPP_MISSION_SHARE"});
+    }
+
+    var r = OcbAndroidJS.requestKakaoLinkMessageV2(message);
+    printResult(id, r);
+}
+
+function requestUpdateAdView() {
+    console.log("called requestUpdateAdView()");
+    OcbAndroidJS.requestUpdateAdView("choolcheck1");
+}
+
+var TmapObject = new Object();
+TmapObject.onInstalled = function(result) {
+    printResult('isTmapInstalled', result);
+};
+
+TmapObject.onDownloadUrl = function(result) {
+    printResult('requestTmapDownloadUrl', result);
+    OcbAndroidJS.showToast(result);
+};
+
+TmapObject.onInvoke = function(result) {
+    printResult('requestInvokeRoute', result);
+};
+
+function isTmapInstalled() {
+    console.log("called isTmapInstalled()");
+    OcbAndroidJS.isTmapInstalled("TmapObject.onInstalled");
+}
+
+function requestTmapDownloadUrl() {
+    console.log("called requestTmapDownloadUrl()");
+    OcbAndroidJS.requestTmapDownloadUrl("TmapObject.onDownloadUrl");
+}
+
+function requestInvokeRoute() {
+    console.log("called requestInvokeRoute()");
+    var longitude = 126.983915;
+    var latitude = 37.566041;
+    OcbAndroidJS.requestInvokeRoute("aaa", longitude, latitude, "TmapObject.onInvoke");
+}
+
+var MediaObj = new Object();
+MediaObj.onRequest = function(result, autoplay) {
+    printResult('requestUpdateMediaAutoPlay', result);
+}
+
+MediaObj.onResponse = function(result, autoplay) {
+    printResult('requestRetrieveMediaAutoPlay', autoplay);
+}
+
+function requestUpdateMediaAutoPlay() {
+    console.log("called requestUpdateMediaAutoPlay()");
+    OcbAndroidJS.requestUpdateMediaAutoPlay(1, 'MediaObj.onRequest');
+}
+
+function requestRetrieveMediaAutoPlay() {
+    console.log("called requestRetrieveMediaAutoPlay()");
+    OcbAndroidJS.requestRetrieveMediaAutoPlay('MediaObj.onResponse');
+}
+
+</script>
+    </head>
+
+    <body>
+        <table>
+            <tr id="b1016">
+                <td><a href="javascript:requestUpdateMediaAutoPlay()">requestUpdateMediaAutoPlay</a></td>
+                <td id="requestUpdateMediaAutoPlay">&nbsp;</td>
+            </tr>
+
+            <tr id="b1015">
+                <td><a href="javascript:requestRetrieveMediaAutoPlay()">requestRetrieveMediaAutoPlay</a></td>
+                <td id="requestRetrieveMediaAutoPlay">&nbsp;</td>
+            </tr>
+
+            <tr id="b1014">
+                <td><a href="javascript:isTmapInstalled()">isTmapInstalled</a></td>
+                <td id="isTmapInstalled">&nbsp;</td>
+            </tr>
+            <tr id="b1013">
+                <td><a href="javascript:requestTmapDownloadUrl()">requestTmapDownloadUrl</a></td>
+                <td id="requestTmapDownloadUrl">&nbsp;</td>
+            </tr>
+            <tr id="b1012">
+                <td><a href="javascript:requestInvokeRoute()">requestInvokeRoute</a></td>
+                <td id="requestInvokeRoute">&nbsp;</td>
+            </tr>
+
+            <tr id="b1011">
+                <td><a href="javascript:requestUpdateAdView()">requestUpdateAdView</a></td>
+                <td id="requestUpdateAdView">&nbsp;</td>
+            </tr>
+
+            <tr id="b1010">
+                <td>
+                    <a href="javascript:requestKakaoLinkMessageV2('custom_type', 'kakaolinkv2')">requestKakaoLinkMessageV2</a></br>
+                    <select id="typev2">
+                        <option value="0">Feed</option>
+                        <option value="1">Scrap</option>
+                        <option value="2">Custom</option>
+                    </select>
+                    <input type="text" value="9038" id="custom_type" /></br>
+                    </div>
+                </td>
+                <td id="kakaolinkv2">&nbsp;</td>
+            </tr>
+
+            <tr id="b1009">
+                <td><a href="javascript:requestUpdateAdmobAdView()">requestUpdateAdmobAdView</a></td>
+                <td id="requestUpdateAdmobAdView">&nbsp;</td>
+            </tr>
+            <tr id="b1008">
+                <td><a href="javascript:requestDawinAdWindow()">requestDawinAdWindow</a></td>
+                <td id="requestDawinAdWindow">&nbsp;</td>
+            </tr>
+            <tr id="b1007">
+                <td><a href="javascript:requestHorizontalScrollEnable()">requestHorizontalScrollEnable</a>
+                    <select id="setDiableTouch">
+                        <option value="1">true</option>
+                        <option value="0">false</option>
+                    </select>
+                </td>
+            </tr>
+            <tr id="b1006">
+                <td><a href="javascript:testRequestSystemLocationSetting()">requestSystemLocationSetting</a></td>
+                <td id="requestSystemLocation">&nbsp;</td>
+            </tr>
+            <tr id="b1005">
+                <td><a href="javascript:testRequestUpdateSession()">requestUpdateSession</a></td>
+                <td id="requestUpdateSession">&nbsp;</td>
+            </tr>
+            <tr id="b1004">
+                <td><a href="javascript:testRequestIssueCard('issueCard')">requestIssueCard</a></td>
+                <td id="requestIssueCard">&nbsp;</td>
+            </tr>
+            <tr id="b13">
+                <td>
+                    <a href="javascript:testRequestOnDemand('ondemand')">requestOnDemand</a>
+                    <select id="reqType">
+                        <option value="area">area</option>
+                        <option value="store">store</option>
+                        <option value="all">all</option>
+                    </select>
+                </td>
+                <td id="ondemand">&nbsp;</td>
+            </tr>
+            <tr id="b12">
+                <td><a href="javascript:requestMainUpdate('requestMainUpdate')">requestMainUpdate()</a></td>
+                <td id="requestMainUpdate">&nbsp;</td>
+            </tr>
+            <tr id="b11">
+                <td><a href="javascript:testRequestARWindowClose()">requestARWindowClose</a></td>
+                <td id="requestarclose">&nbsp;</td>
+            </tr>
+            <tr id="b10">
+                <td><a href="javascript:testRequestARWindow('requestar')">requestARWindow</a></td>
+                <td id="requestar">&nbsp;</td>
+            </tr>
+            <tr id="b9">
+                <td><a href="javascript:testRequestARSettings('arsettings')">requestARSettings</a></td>
+                <td id="arsettings">&nbsp;</td>
+            </tr>
+            <tr id="b8">
+                <td>
+                    <a href="javascript:requestOneClickChargeAuthWindow('oneclickcharge')">requestOneClickChargeAuthWindow</a>
+                </td>
+                <td id="oneclickcharge">&nbsp;</td>
+            </tr>
+            <tr id="b7">
+                <td>
+                    <a href="javascript:showChargingAmountPopup('chargeamount')">showChargingAmountPopup</a>
+                </td>
+                <td id="chargeamount">&nbsp;</td>
+            </tr>
+            <tr id="b6">
+                <td>
+                    <a href="javascript:requestPushState('pushstate')">requestPushState</a>
+                    <select id="pushStateFields" size='10' multiple>
+                        <option value="push_all_state">push 알림</option>
+                        <option value="push_trade_state">포인트 사용/적립</option>
+                        <option value="push_benefit_state">혜택/모바일 전단</option>
+                        <option value="push_share_state">친구와 같이 쓰기</option>
+                        <option value="push_popup_state">동전 알림</option>
+                    </select>
+                </td>
+                <td id="pushstate">&nbsp;</td>
+            </tr>
+            <tr id="b5">
+                <td>
+                    <a href="javascript:testShowEditPopup('editpopup')">showEditPopup</a></br>
+                    <select id="inputtype">
+                        <option value="text">text</option>
+                        <option value="number">number</option>
+                        <option value="phone">phone</option>
+                        <option value="email">email</option>
+                    </select>
+                </td>
+                <td id="editpopup">&nbsp;</td>
+            </tr>
+            <tr id="b4">
+                <td>
+                    <a href="javascript:requestKakaoLinkMessage('kakaolink')">requestKakaoLinkMessage</a></br>
+                    <select id="linktype">
+                        <option value="0">App Link</option>
+                        <option value="1">Web Link</option>
+                    </select>
+                    <select id="buttontype">
+                        <option value="2">App Button</option>
+                        <option value="3">Web Button</option>
+                    </select>
+                    </div>
+                </td>
+                <td id="kakaolink">&nbsp;</td>
+            </tr>
+
+            <tr id="good1">
+                <td>
+                    <div>
+                        <input type="text" value="문자메시지를 발송합니다." id="smsmessage" /></br>
+                        <a href="javascript:testSendSMS('smsmessage', 'sendsms')">sendSMS</a>
+                    </div>
+                </td>
+                <td id="sendsms">&nbsp;</td>
+            </tr>
+            <tr id="b3">
+                <td>
+                    <div>
+                        <input type="text" value="9999-9444-1234-2658" id="cardNumber" /></br>
+                        <a href="javascript:testAddTextToClipboard('cardNumber', 'clipboard')">addTextToClipboard</a>
+                    </div>
+                </td>
+                <td id="clipboard">&nbsp;</td>
+            </tr>
+            <tr id="b2">
+                <td>
+                    <a href="javascript:testGetAuthInfoExtras('authinfoExtras')">getAuthInfoExtras</a>
+                    <select id="authinfoFields" size='10' multiple>
+                        <option value="auth">auth</option>
+                        <option value="type">type</option>
+                        <option value="session">session</option>
+                    </select>
+                </td>
+                <td id="authinfoExtras">&nbsp;</td>
+            </tr>
+
+            <tr id="b1">
+                <td><a href="javascript:requestPlusAuthWindow('plusauth')">requestPlusAuthWindow</a></td>
+                <td id="plusauth">&nbsp;</td>
+            </tr>
+
+            <tr id="a1">
+                <td><a href="javascript:testGetMdn('mdn')">getMdn</a></td>
+                <td id="mdn">&nbsp;</td>
+            </tr>
+
+            <tr id="a2">
+                <td>
+                    <div>
+                        <input type="text" value="com.ahnlab.v3mobileplus"
+                                           id="pkgname" /></br> <a
+                                           href="javascript:testIsInstalledPackage('pkgname', 'installed')">isInstalledPackage</a>
+                    </div>
+                </td>
+                <td id="installed">&nbsp;</td>
+            </tr>
+
+            <tr id="a3">
+                <td><a href="javascript:testGetOSInfo('ostype')">getOSInfo</a></td>
+                <td id="ostype">&nbsp;</td>
+            </tr>
+
+            <tr id="a4">
+                <td><a href="javascript:testRequestRender('reqrender')">requestRender</a></td>
+                <td id="reqrender">&nbsp;</td>
+            </tr>
+
+            <tr id="a5">
+                <td><a href="javascript:testRequestCloseWindow('reqclosewind')">requestCloseWindow</a></td>
+                <td id="reqclosewind">&nbsp;</td>
+            </tr>
+
+            <tr id="a6">
+                <td>
+                    <div>
+                        <input type="text" value="http://www.google.com" id="url" /></br> <a
+                                                                         href="javascript:testStartBrowser('url','browser')">startBrowser</a>
+                    </div>
+                </td>
+                <td id="browser">&nbsp;</td>
+            </tr>
+
+            <tr id="a7">
+                <td>
+                    <div>
+                        <input type="text" value="http://m.ocb.do/go/viewEvent?id=1234"
+                                           id="pagecode" /></br> <a
+                                           href="javascript:testNavigateWindow('pagecode', 'viewpage')">navigateWindow</a>
+                    </div>
+                </td>
+                <td id="viewpage">&nbsp;</td>
+            </tr>
+
+            <tr id="a8">
+                <td>
+                    <div>
+                        <input type="text" value="02115883082" id="phone1" /></br> <a
+                                                               href="javascript:testRequestPhoneCall('phone1', 'phonecall')">requestPhoneCall</a>
+                    </div>
+                </td>
+                <td id="phonecall">&nbsp;</td>
+            </tr>
+
+
+            <tr id="a9">
+                <td>
+                    <div>
+                        <input type="text" value="02115883082" id="phone2" /></br> <a
+                                                               href="javascript:testRequestDeliveryCall('phone2', 'deliverycall')">requestDeliveryCall</a>
+                    </div>
+                </td>
+                <td id="deliverycall">&nbsp;</td>
+            </tr>
+
+            <tr id="a10">
+                <td><a href="javascript:testClearWebViewCache('clearcache')">clearWebViewCache</a></td>
+                <td id="clearcache">&nbsp;</td>
+            </tr>
+
+            <tr id="a11">
+                <td><a
+                href="javascript:testClearWebViewHistory('clearhistory')">clearWebViewHistory</a></td>
+                <td id="clearhistory">&nbsp;</td>
+            </tr>
+
+            <tr id="a12">
+                <td><a href="javascript:testGetAppVersion('appversion')">getAppVersion</a></td>
+                <td id="appversion">&nbsp;</td>
+            </tr>
+
+            <tr id="a12_1">
+                <td>
+                    <div>
+                        <input type="text" value="com.google.android.webview" id="a12_1_pkgname" /></br>
+                        <a href="javascript:testGetAppVersionInfo('a12_1_pkgname', 'appversioninfo')">getAppVersionInfo</a>
+                    </div>
+                </td>
+                <td id="appversioninfo">&nbsp;</td>
+            </tr>
+
+            <tr id="a13">
+                <td><a href="javascript:testGetAuthInfo('authinfo')">getAuthInfo</a></td>
+                <td id="authinfo">&nbsp;</td>
+            </tr>
+
+            <tr id="a14">
+                <td><a href="javascript:testPickContact('pick')">requestPickContact</a></td>
+                <td id="pick">&nbsp;</td>
+            </tr>
+
+            <tr id="a15">
+                <td><a href="javascript:testShowPopup('popup1')">showPopup(1button)</a></td>
+                <td id="popup1">&nbsp;</td>
+            </tr>
+
+            <tr id="a16">
+                <td><a href="javascript:testShowPopup2('popup2')">showPopup(2button)</a></td>
+                <td id="popup2">&nbsp;</td>
+            </tr>
+
+            <tr id="a20">
+                <td><a href="javascript:testShowGisAgreePopup('gispopup')">showGisAgreePopup</a></td>
+                <td id="gispopup">&nbsp;</td>
+            </tr>
+
+            <tr id="a17">
+                <td><a href="javascript:testShowHeaderPopup('header')">showHeaderPopup(1button)</a></td>
+                <td id="header1">&nbsp;</td>
+            </tr>
+            <tr id="a18">
+                <td><a href="javascript:testShowHeaderPopup2('header2')">showHeaderPopup(2button)</a></td>
+                <td id="header2">&nbsp;</td>
+            </tr>
+
+            <tr id="a19">
+                <td><a href="javascript:testRegisterViewSelectedListener('viewSeclected')">registerViewSelectedListener</a></td>
+                <td id="viewSeclected">&nbsp;</td>
+            </tr>
+
+            <tr id="a200">
+                <td><a href="javascript:testShowLinkifyPopup('linkify')">showLinkifyPopup()</a></td>
+                <td id="viewSeclected">&nbsp;</td>
+            </tr>
+
+            <tr id="a201">
+                <td><a href="javascript:testshowWebViewPopup('webviewPopup')">showWebViewPopup()</a></td>
+                <td id="webviewPopup">&nbsp;</td>
+            </tr>
+
+            <tr id="a202">
+                <td><a href="javascript:testshowBarcodePopup('barcodePopup')">showBarcodeScanPopup()</a></td>
+                <td id="barcodePopup">&nbsp;</td>
+            </tr>
+
+            <tr id="a203">
+                <td><a href="javascript:testRegisterListener('query')">OcbSearchViewJS.registerListener</a></td>
+                <td id="query">&nbsp;</td>
+            </tr>
+
+            <tr id="a204">
+                <td><a
+                href="javascript:testRequestCurrentLocation('currentLocation')">requestCurrentLocation</a></td>
+                <td id="currentLocation">&nbsp;</td>
+            </tr>
+
+            <tr id="a205">
+                <td><a
+                href="javascript:testRequestChangeLocationWindow('changeLocation')">requestChangeLocationWindow</a></td>
+                <td id="changeLocation">&nbsp;</td>
+            </tr>
+
+            <tr id="a206">
+                <td><a
+                href="javascript:testRequestConfirmPasswordWindow('confirmPassword')">requestConfirmPasswordWindow</a></td>
+                <td id="confirmPassword">&nbsp;</td>
+            </tr>
+            <tr id="a206000">
+                <td><a
+                href="javascript:testRequestConfirmAppPasswordWindow('confirmAppPassword')">requestConfirmAppPasswordWindow</a></td>
+                <td id="confirmAppPassword">&nbsp;</td>
+            </tr>
+            <tr id="a206001">
+                <td><a
+                href="javascript:testRequestPinSetWindow('pinsetWindow')">requestPinSetWindow</a></td>
+                <td id="pinsetWindow">&nbsp;</td>
+            </tr>
+            <tr id="a207">
+                <td><a
+                href="javascript:testPickContactRecently('pickRecently')">requestRecentlyContactsWindow</a></td>
+                <td id="pickRecently">&nbsp;</td>
+            </tr>
+
+            <tr id="a300">
+                <td><input type="checkbox" name="backaction" value="history" />Action
+                    History Back <br /> <a
+                                                             href="javascript:testRegisterBackKeyListener('backaction', 'back')">registerBackKeyListene(히스토리가
+                                                             없는 경우)</a></td>
+                <td id="back">&nbsp;</td>
+
+            </tr>
+
+            <tr id="a301">
+                <td>
+                    <div>
+                        <a href="example_history.html">Back Key Test 이동(히스토리가 있는 경우)</a>
+                    </div>
+                </td>
+            </tr>
+
+            <tr id="a101">
+                <td><a href="http://www.google.com">go google in app</a></td>
+                <td id="query">&nbsp;</td>
+            </tr>
+
+            <tr id="a400">
+                <td><a href="javascript:testPayment('ksp')">payment test</a></td>
+                <td id="ksp">&nbsp;</td>
+            </tr>
+
+            <tr id="a401">
+                <td><a href="javascript:testPostcode('postcode')">postcode test</a></td>
+                <td id="postcode">&nbsp;</td>
+            </tr>
+
+            <tr id="a900">
+                <td><a href="javascript:trackLog()">trackLog</a></td>
+                <td id="trackLog">&nbsp;</td>
+            </tr>
+
+            <tr id="a901">
+                <td><a href="javascript:trackFlush()">trackFlush</a></td>
+                <td id="trackFlush">&nbsp;</td>
+            </tr>
+            <tr id="a902">
+                <td><a href="javascript:agreeOemClause()">agreeOemClause</a></td>
+                <td id="agreeOemClause">&nbsp;</td>
+            </tr>
+            <tr id="a903">
+                <td><a href="javascript:isAgreedOemClause()">isAgreedOemClause</a></td>
+                <td id="isAgreedOemClause">&nbsp;</td>
+            </tr>
+
+            <tr id="a904">
+                <td><a href="javascript:testGetHeader('getheader')">getExtensionHeader</a></td>
+                <td id="getheader">&nbsp;</td>
+            </tr>
+
+            <tr id="a905">
+                <td><a href="javascript:requestMultiSelectContactsWindow()">requestMultiSelectContactsWindow</a></td>
+                <td id="multipick">&nbsp;</td>
+            </tr>
+            <tr id="a906">
+                <td><a href="javascript:testIsBluetoothUseAgreed('isBluetoothUseAgreed')">isBluetoothUseAgreed</a></td>
+                <td id="isBluetoothUseAgreed">&nbsp;</td>
+            </tr>
+            <tr id="a907">
+                <td><a href="javascript:setBluetoothUseAgreed()">setBluetoothUseAgreed</a></td>
+                <td id="setBluetoothUseAgreed">
+                    <select id="s907">
+                        <option value="1">true</option>
+                        <option value="0">false</option>
+                    </select>
+                </td>
+            </tr>
+
+            <!-- START : LOCKER -->
+            <tr id="a1000">
+                <td><a href="javascript:enableLocker()">enableLocker</a></td>
+                <td id="enableLocker">
+                    <select id="s1000">
+                        <option value="1">true</option>
+                        <option value="0">false</option>
+                    </select>
+                </td>
+            </tr>
+            <tr id="a1001">
+                <td><a href="javascript:getLockerInfo('lockerinfo')">getLockerInfo</a></td>
+                <td id="lockerinfo">&nbsp;</td>
+            </tr>
+            <tr id="a1002">
+                <td><a href="javascript:isEnabledLocker('isEnabledLocker')">isEnabledLocker</a></td>
+                <td id="isEnabledLocker">&nbsp;</td>
+            </tr>
+            <tr id="a1003">
+                <td>
+                    <input type="text" value="51" id="missionid" /></br>
+                    <a href="javascript:requestUpdateMissionWithCallBack('missionid')">requestUpdateMissionWithCallBack</a></td>
+                <td id="callback">&nbsp;</td>
+            </tr>
+            <!-- END : LOCKER -->
+
+            <!-- START : ADD TOAST -->
+            <tr id="a1100">
+                <td>
+                    <input type="text" value="dafualt message" id="msg" /></br>
+                    <a href="javascript:showToast('msg')">showToast</a></td>
+                <td id="ToastType">
+                    <select id="s1100">
+                        <option value="0">dafault</option>
+                        <option value="1">alarm</option>
+                        <option value="2">noti</option>
+                        <option value="3">heart</option>
+                    </select>
+                </td>
+            </tr>
+            <!-- END : ADD TOAST -->
+
+            <!-- START : SCROLL -->
+            <tr id="a1101">
+                <td><a href="javascript:requestScrollToTop()">requestScrollToTop</a></td>
+                <td id="requestScrollToTop">&nbsp;</td>
+            </tr>
+            <tr id="a1102">
+                <td><a href="javascript:requestScrollToContentTop()">requestScrollToContentTop</a></td>
+                <td id="requestScrollToContentTop">&nbsp;</td>
+            </tr>
+            <tr id="a1103">
+                <td><a href="javascript:requestScrollToBottom()">requestScrollToBottom</a></td>
+                <td id="requestScrollToBottom">&nbsp;</td>
+            </tr>
+            <!-- END : SCROLL -->
+
+            <!-- START : BARCODE FAB -->
+            <tr id="a1104">
+                <td><a href="javascript:showBarcodeAction()">showBarcodeAction</a></td>
+                <td id="showBarcodeAction">&nbsp;</td>
+            </tr>
+            <tr id="a1105">
+                <td><a href="javascript:hideBarcodeAction()">hideBarcodeAction</a></td>
+                <td id="hideBarcodeAction">&nbsp;</td>
+            </tr>
+            <!-- END : BARCODE FAB -->
+
+            <!-- START : requestShowFeedbackWithCallback -->
+            <tr id="a1106">
+                <td><a href="javascript:requestShowFeedbackWithCallback()">requestShowFeedbackWithCallback</a></td>
+                <td id="ShowFeedbackWithCallback">&nbsp;</td>
+            </tr>
+            <!-- END : requestShowFeedbackWithCallback -->
+
+            <!-- START : getSyrupAdDeviceId -->
+            <tr id="a1107">
+                <td><a href="javascript:getSyrupAdDeviceId('getSyrupAdDeviceId')">getSyrupAdDeviceId</a></td>
+                <td id="getSyrupAdDeviceId">&nbsp;</td>
+            </tr>
+            <!-- END : getSyrupAdDeviceId -->
+
+            <!-- START : SCRAP OVERLAY -->
+            <tr id="a1108">
+                <td><a href="javascript:enableScrapOverlay()">enableScrapOverlay</a></td>
+                <td id="enableScrapOverlay">&nbsp;</td>
+            </tr>
+            <tr id="a1109">
+                <td><a href="javascript:disableScrapOverlay()">disableScrapOverlay</a></td>
+                <td id="disableScrapOverlay">&nbsp;</td>
+            </tr>
+            <!-- END : SCRAP OVERLAY -->
+
+
+            <!-- START : PERMISSION -->
+            <tr id="a1200">
+                <td><a href="javascript:testCheckPermission('permResult')">checkPermission</a></td>
+                <td id="PermissionType">
+                    <select id="s1200" size="10" multiple>
+                        <option value="android.permission.CAMERA">CAMERA</option>
+                        <option value="android.permission.READ_CONTACTS">READ_CONTACTS</option>
+                        <option value="android.permission.WRITE_CONTACTS">WRITE_CONTACTS</option>
+                        <option value="android.permission.ACCESS_FINE_LOCATION">ACCESS_FINE_LOCATION</option>
+                        <option value="android.permission.ACCESS_COARSE_LOCATION">ACCESS_COARSE_LOCATION</option>
+                        <option value="android.permission.READ_PHONE_STATE">READ_PHONE_STATE</option>
+                        <option value="android.permission.CALL_PHONE">CALL_PHONE</option>
+                        <option value="android.permission.READ_CALL_LOG">READ_CALL_LOG</option>
+                        <option value="android.permission.WRITE_CALL_LOG">WRITE_CALL_LOG</option>
+                        <option value="android.permission.USE_SIP">USE_SIP</option>
+                    </select>
+                </td>
+            </tr>
+            <tr id="a1201">
+                <td <a>CheckPermission result</a>
+                    <td id="permResult">&nbsp;</td>
+            </tr>
+            <tr id="a1202">
+                <td><a href="javascript:testRequestPermission('grantResults')">requestPermission</a></td>
+                <td id="PermissionType">
+                    <select id="s1202" size='10' multiple>
+                        <option value="android.permission.CAMERA">CAMERA</option>
+                        <option value="android.permission.READ_CONTACTS">READ_CONTACTS</option>
+                        <option value="android.permission.WRITE_CONTACTS">WRITE_CONTACTS</option>
+                        <option value="android.permission.ACCESS_FINE_LOCATION">ACCESS_FINE_LOCATION</option>
+                        <option value="android.permission.ACCESS_COARSE_LOCATION">ACCESS_COARSE_LOCATION</option>
+                        <option value="android.permission.READ_PHONE_STATE">READ_PHONE_STATE</option>
+                        <option value="android.permission.CALL_PHONE">CALL_PHONE</option>
+                        <option value="android.permission.READ_CALL_LOG">READ_CALL_LOG</option>
+                        <option value="android.permission.WRITE_CALL_LOG">WRITE_CALL_LOG</option>
+                        <option value="android.permission.USE_SIP">USE_SIP</option>
+                    </select>
+                </td>
+            </tr>
+            <tr id="a1203">
+                <td <a>RequestPermission result</a>
+                    <td id="grantResults">&nbsp;</td>
+            </tr>
+            <!-- END : SCRAP PERMISSION -->
+            <tr id="a1301">
+                <td><a href="javascript:requestStampPopup()">requestStampPopup</a></td>
+                <td id="requestStampPopup">&nbsp;</td>
+            </tr>
+            <tr id="a1311">
+                <td><a href="javascript:showNotification()">showNotification</a></td>
+                <td id="showNotification">&nbsp;</td>
+            </tr>
+            <tr id="a1312">
+                <td><a href="javascript:hideNotification()">hideNotification</a></td>
+                <td id="hideNotification">&nbsp;</td>
+            </tr>
+            <tr id="a1361">
+                <td><a href="javascript:requestWelcomePackage()">requestWelcomePackage</a></td>
+                <td id="requestWelcomePackage">&nbsp;</td>
+            </tr>
+            <tr id="a1362">
+                <td><a href="javascript:requestVungleAdWindow()">requestVungleAdWindow</a></td>
+                <td id="requestVungleAdWindow">&nbsp;</td>
+            </tr>
+            <tr id="a1363">
+                <td><a href="javascript:requestPaycoChargeAuthWindow()">requestPaycoChargeAuthWindow Default</a></td>
+                <td id="requestPaycoChargeAuthWindow">&nbsp;</td>
+            </tr>
+            <tr id="a8000">
+                <td><a href="javascript:requestPaycoChargeAuthWindow2()">requestPaycoChargeAuthWindow(4)</a></td>
+            </tr>
+            <tr id="a8001">
+                <td><a href="javascript:requestPaycoChargeAuthWindow3()">requestPaycoChargeAuthWindow(5)</a></td>
+            </tr>
+            <tr id="a8003">
+                <td><a href="javascript:requestPaycoChargeAuthWindow4()">requestPaycoChargeAuthWindow(6)</a></td>
+            </tr>
+
+                <tr id="a1364">
+                    <td><a href="javascript:showChargingAmountPopup()">showChargingAmountPopup</a></td>
+                    <td id="showChargingAmountPopup">&nbsp;</td>
+                </tr>
+                <tr id="a1365">
+                    <td><a href="javascript:registerOnResumeCallback('registerOnResumeCallback')">registerOnResumeCallback</a></td>
+                    <td id="registerOnResumeCallback">&nbsp;</td>
+                </tr>
+                <tr id="a1366">
+                    <td><a href="javascript:registerOnStopCallback('registerOnStopCallback')">registerOnStopCallback</a></td>
+                    <td id="registerOnStopCallback">&nbsp;</td>
+                </tr>
+                <tr id="a1367">
+                    <td><a href="javascript:setAgreedGisClause('setAgreedGisClause')">setAgreedGisClause</a></td>
+                    <td id="setAgreedGisClause">&nbsp;</td>
+                </tr>
+
+                <!--5.8.0-->
+                <tr id="5.8.0">
+                    <td>5.8.0</td>
+                </tr>
+                <tr id="a1370">
+                    <td><a href="javascript:isAgreedBenefitClause('isAgreedBenefitClause')">isAgreedBenefitClause</a></td>
+                    <td id="isAgreedBenefitClause">&nbsp;</td>
+                </tr>
+                <tr id="a1371">
+                    <td><a href="javascript:testSetAgreedBenefitClause('s1371')">setAgreedBenefitClause</a>
+                        <select id="s1371">
+                            <option value="1">true</option>
+                            <option value="0">false</option>
+                        </select>
+                    </td>
+                    <td id="setAgreedBenefitClauseResult">&nbsp;</td>
+                </tr>
+                <tr id="a1372">
+                    <td><a href="javascript:isAgreedLockerClause('isAgreedLockerClause')">isAgreedLockerClause</a></td>
+                    <td id="isAgreedLockerClause">&nbsp;</td>
+                </tr>
+                <tr id="a1373">
+                    <td><a href="javascript:testSetAgreedLockerClause('s1373')">setAgreedLockerClause</a>
+                        <select id="s1373">
+                            <option value="1">true</option>
+                            <option value="0">false</option>
+                        </select>
+                    </td>
+                    <td id="setAgreedLockerClauseResult">&nbsp;</td>
+                </tr>
+                <tr id="a1374">
+                    <td>
+                        <a href="javascript:getAndroidID('androidID')">getAndroidID</a>
+                    </td>
+                    <td id="androidID">&nbsp;</td>
+                </tr>
+                <tr id="a1375">
+                    <td>
+                        <a href="javascript:getAdvertiseID('advertiseID')">getAdvertiseID</a>
+                    </td>
+                    <td id="advertiseID">&nbsp;</td>
+                </tr>
+                <tr id="a1376">
+                    <td><a href="javascript:testRequestAuthInfo('authinfo')">requestAuthInfo</a></td>
+                    <td id="requestauthinfo">&nbsp;</td>
+                </tr>
+                <tr id="a1377">
+                    <td>
+                        <a href="javascript:testRequestAuthInfoExtras('authinfoExtras')">testRequestAuthInfoExtras</a>
+                        <select id="authinfoFields" size='10' multiple>
+                            <option value="auth">auth</option>
+                            <option value="type">type</option>
+                            <option value="session">session</option>
+                        </select>
+                    </td>
+                    <td id="requestauthinfoExtras">&nbsp;</td>
+                </tr>
+                <tr id="a1378">
+                    <td><a href="javascript:testRequestHeader('requestheader')">requestExtensionHeader</a></td>
+                    <td id="requestheader">&nbsp;</td>
+                </tr>
+                <tr id="a1379">
+                    <td><a href="javascript:testRequestMdn('requestmdn')">requestMdn</a></td>
+                    <td id="requestmdn">&nbsp;</td>
+                </tr>
+                <tr id="a1380">
+                    <td><a href="javascript:requestWebviewPopup('viewpopup')">requestWebviewPopup()</a></td>
+                    <td id="viewpopup">&nbsp;</td>
+                </tr>
+                <tr id="a1381">
+                    <td><a href="javascript:showErrorPopup('errorpopup')">showErrorPopup(1button)</a></td>
+                    <td id="errorpopup">&nbsp;</td>
+                </tr>
+                <tr id="a1382">
+                    <td><a href="javascript:requestWithdrawal('requestWithdrawal')">requestWithdrawal()</a></td>
+                    <td id="requestWithdrawal">&nbsp;</td>
+                </tr>
+                <tr id="a1383">
+                    <td><a href="javascript:requestAppFinish('requestAppFinish')">requestAppFinish()</a></td>
+                    <td id="requestAppFinish">&nbsp;</td>
+                </tr>
+                <tr id="a1384">
+                    <td><a href="javascript:registerLockerDirect('registerLockerDirect')">registerLockerDirect()</a></td>
+                    <td id="registerLockerDirect">&nbsp;</td>
+                </tr>
+                <tr id="a1385">
+                    <td><a href="javascript:registerSmsReceive('registerSmsReceive')">registerSmsReceive()</a></td>
+                    <td id="registerSmsReceive">&nbsp;</td>
+                </tr>
+                <tr id="a1387">
+                    <td><a href="javascript:unRegisterLockerDirect('unRegisterLockerDirect')">unRegisterLockerDirect()</a></td>
+                    <td id="unRegisterLockerDirect">&nbsp;</td>
+                </tr>
+                <tr id="a1389">
+                    <td>
+                        <div>
+                            <input type="number" value="2" id="favoritecnt" /></br>
+                            <a href="javascript:updateFavorites('favoritecnt', 'updateFavorites')">updateFavorites</a>
+                        </div>
+                    </td>
+                    <td id="updateFavorites">&nbsp;</td>
+                </tr>
+                <tr id="a1390">
+                    <td>
+                        <a href="javascript:testRequestFullScreen('s1390')">testRequestFullScreen</a>
+                        <select id="s1390">
+                            <option value="1">true</option>
+                            <option value="0">false</option>
+                        </select>
+                    </td>
+                    <td id="requestFullScreen">&nbsp;</td>
+                </tr>
+                <tr id="a1392">
+                    <td>
+                        <a href="javascript:availableLockerService('availableLockerService')">availableLockerService</a>
+                    </td>
+                    <td id="availableLockerService">&nbsp;</td>
+                </tr>
+
+                <tr id="a1393">
+                    <td>
+                        <a href="javascript:requestKmcAuthWindow('requestKmcAuthWindow')">requestKmcAuthWindow</a>
+                    </td>
+                    <td id="requestKmcAuthWindow">&nbsp;</td>
+                </tr>
+
+               <tr id="a1394">
+                    <td>
+                        <a href="javascript:requestOcbCardAuthWindow('requestOcbCardAuthWindow')">requestOcbCardAuthWindow</a>
+                    </td>
+                    <td id="requestOcbCardAuthWindow">&nbsp;</td>
+                </tr>
+                <tr id="a1395">
+                    <td>
+                        <a href="javascript:requestEmailClient('s1395')">requestEmailClient</a>
+                        <select id="s1395">
+                            <option value="1">true</option>
+                            <option value="0">false</option>
+                        </select>
+                    </td>
+                    <td id="requestEmailClient">&nbsp;</td>
+                </tr>
+                <tr id="a1396">
+                    <td><a href="javascript:testisLockerMigrated('lockermigration')">isLockerMigrated</a></td>
+                    <td id="lockermigration">&nbsp;</td>
+                </tr>
+                <tr id="a1397">
+                    <td><a href="javascript:testPinStatus('requestPinStatus')">requestPinStatus</a></td>
+                    <td id="requestPinStatus">&nbsp;</td>
+                </tr>
+        </table>
+    </body>
+</html>

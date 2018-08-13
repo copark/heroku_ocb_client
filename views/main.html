@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<title>Bogus</title>
+	
+<style type="text/css">
+a.no-uline 
+{ 
+	text-decoration:none; 
+	color:#222;
+	display:block;
+	font-size:95%;
+	font-weight:700;
+	line-height:150%;
+	padding:0 0 1px;
+}
+	
+#footer
+{
+	width:640px;
+	clear:both;
+	color:#999999;
+	text-align:left;
+	width:640px;
+	font-size: 85%;
+}
+</style>
+<script>
+		function goJsEntry(command) {
+			 console.log( "ready!" );
+			 pageUrl = "jssuite.html";
+			 var host = location.host
+			 var proto = location.protocol
+			 var path = location.pathname.substring(0, location.pathname.lastIndexOf('/')+1);
+			 var urlval = proto +"//" + host + path + pageUrl
+			 var full = "ocbt://com.skmc.okcashbag.home_google/" + command + "?url=" + encodeURI(urlval) + "&title=test"
+			 console.log(full);
+       location.href = full;
+			  };
+</script>
+</head>
+		
+<body id="main_body" >
+	<h1>OK Cashbag Test</h1>
+	<hr>
+	<div>
+	<h2>Javascript API Test</h2>
+		<ul style="list-style-type:none font">
+			<li><a href="jstest/index.html" class="no-uline">Test case</a></li>
+			<li><a href="#" onclick="goJsEntry('detail/event'); return false;" class="no-uline">JS UnitTest</a></li>
+			<li><a href="#" onclick="goJsEntry('cashbeeMain'); return false;" class="no-uline">JS UnitTest(Cashbee)</a></li>
+	</ul>
+	</div>
+	<hr>
+	
+	<div>
+	<h2>Scheme Test</h2>
+		<ul style="list-style-type:none font">
+			<li><a href="scheme1.html" class="no-uline">Test case</a></li>
+	</ul>
+	</div>
+	<hr>
+	<hr>
+	<div>
+	<h2>Image Shrink</h2>
+		<ul style="list-style-type:none font">
+			<li><a href="img_shrinker.html" class="no-uline">Image Shrink</a></li>
+	</ul>
+	</div>
+	<hr>
+	<div>
+	<h2>Generate Scheme Url</h2>
+		<ul style="list-style-type:none font">
+			<li><a href="url_generator.html" class="no-uline">Url Generator</a></li>
+	</ul>
+	</div>
+	<hr>
+</body>
+</html>
+
