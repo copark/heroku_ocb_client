@@ -97,24 +97,24 @@ function generateOcbUrl() {
     sb.append(DIRECT);
   }
   // command
-  sb.append(StringUtil.removeLastChar(command, '/'));
+  sb.append(StringUtil.removeLastChar(command.trim(), '/'));
   sb.append(QUERY);
 
   // url
   sb.append(PARAM_URL);
-  sb.append(encodeURIComponent(url));
+  sb.append(encodeURIComponent(url.trim()));
   
   // title  
   if (!StringUtil.isEmpty(title)) {
     sb.append(AMPERSAND);
     sb.append(PARAM_TITLE);
-    sb.append(encodeURIComponent(title));
+    sb.append(encodeURIComponent(title.trim()));
   }
   
   if (!StringUtil.isEmpty(mission)) {
     sb.append(AMPERSAND);
     sb.append(PARAM_MISSION);
-    sb.append(encodeURIComponent(mission));
+    sb.append(encodeURIComponent(mission.trim()));
   }
 
   var schemeUrl = sb.toString();
@@ -135,18 +135,18 @@ function generateLockerUrl() {
     sb.append(DIRECT);
   }
   // command
-  sb.append(StringUtil.removeLastChar(command, '/'));
+  sb.append(StringUtil.removeLastChar(command.trim(), '/'));
   sb.append(QUERY);
 
   // url
   sb.append(PARAM_URL);
-  sb.append(encodeURIComponent(url));
+  sb.append(encodeURIComponent(url.trim()));
   
   // title  
   if (!StringUtil.isEmpty(title)) {
     sb.append(AMPERSAND);
     sb.append(PARAM_TITLE);
-    sb.append(encodeURIComponent(title));
+    sb.append(encodeURIComponent(title.trim()));
   }
   
   // titleType  
