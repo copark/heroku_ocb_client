@@ -1,284 +1,300 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <meta name="viewport" content="width=device-width">
-<title>Scheme Generator</title>
-	
-<style type="text/css">
-table {
-  border: 1px solid black;
-  width: 100%
-}
-.LEFT {
-  width: 20%;
-}
-.RIGHT {
-  width: 80%;
-}
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Scheme Generator</title>
 
-input {
-  height: auto;
-  width: 99%;
-  line-height: normal; 
-}
-</style>
-<script type="text/javascript">
-var SLASH = "/";
-var QUERY = "?";
-var AMPERSAND = "&";
-var EQUAL = "=";
+        <style type="text/css">
+            table {
+                border: 1px solid black;
+                width: 100%
+            }
+            .LEFT {
+                width: 20%;
+            }
+            .RIGHT {
+                width: 80%;
+            }
 
-var OCB_SCHEME = "ocbt://com.skmc.okcashbag.home_google" + SLASH;
-var LOCKER_SCHEME = "ocbtlocker://com.skplanet.ocb.locker" + SLASH;
-var DIRECT = "direct" + SLASH;
+            input {
+                height: auto;
+                width: 99%;
+                line-height: normal; 
+            }
+        </style>
+        <script type="text/javascript">
+            var SLASH = "/";
+            var QUERY = "?";
+            var AMPERSAND = "&";
+            var EQUAL = "=";
 
-var PARAM_URL = "url" + EQUAL;
-var PARAM_TITLE = "title" + EQUAL;
-var PARAM_MISSION = "eventId" + EQUAL;
-var PARAM_TITLE_TYPE = "titleType" + EQUAL;
+            var OCB_SCHEME = "ocbt://com.skmc.okcashbag.home_google" + SLASH;
+            var LOCKER_SCHEME = "ocbtlocker://com.skplanet.ocb.locker" + SLASH;
+            var DIRECT = "direct" + SLASH;
 
-//------------------------------------------------
-function StringUtil() {
-}
+            var PARAM_URL = "url" + EQUAL;
+            var PARAM_TITLE = "title" + EQUAL;
+            var PARAM_MISSION = "eventId" + EQUAL;
+            var PARAM_TITLE_TYPE = "titleType" + EQUAL;
 
-StringUtil.isEmpty = function(str) {
-    return (!str || 0 === str.length);
-}
+            //------------------------------------------------
+            function StringUtil() {
+            }
 
-StringUtil.lastChar = function(str) {
-  if (StringUtil.isEmpty(str)) {
-    return '';
-  }
-  
-  return str.charAt(str.length - 1);
-}
+            StringUtil.isEmpty = function(str) {
+                return (!str || 0 === str.length);
+            }
 
-StringUtil.removeLastChar = function(str, c) {
-  var l = StringUtil.lastChar(str);
-  
-  if (l === c) {
-    return str.substring(0, str.length - 1);
-  }
-  
-  return str;  
-}
+            StringUtil.lastChar = function(str) {
+                if (StringUtil.isEmpty(str)) {
+                    return '';
+                }
 
-function StringBuilder(value) {
-    this.strings = new Array("");
-    this.append(value);
-}
+                return str.charAt(str.length - 1);
+            }
 
-StringBuilder.prototype.append = function (value) {
-    if (value) {
-        this.strings.push(value);
-    }
-}
+            StringUtil.removeLastChar = function(str, c) {
+                var l = StringUtil.lastChar(str);
 
-StringBuilder.prototype.clear = function () {
-    this.strings.length = 1;
-}
+                if (l === c) {
+                    return str.substring(0, str.length - 1);
+                }
 
-StringBuilder.prototype.toString = function () {
-    return this.strings.join("");
-}
-//------------------------------------------------
+                return str;  
+            }
 
-function generateOcbUrl() {
-  var isDirect = isChecked('ocb_direct');
-  var command = getValue('ocb_command');
-  var url = getValue('ocb_url');
-  var title = getValue('ocb_title');
-  var mission = getValue('ocb_mission_id');
-  
-  var sb = new StringBuilder();
-  // scheme , direct
-  sb.append(OCB_SCHEME);
-  if (isDirect) {
-    sb.append(DIRECT);
-  }
-  // command
-  sb.append(StringUtil.removeLastChar(command.trim(), '/'));
-  sb.append(QUERY);
+            function StringBuilder(value) {
+                this.strings = new Array("");
+                this.append(value);
+            }
 
-  // url
-  sb.append(PARAM_URL);
-  sb.append(encodeURIComponent(url.trim()));
-  
-  // title  
-  if (!StringUtil.isEmpty(title)) {
-    sb.append(AMPERSAND);
-    sb.append(PARAM_TITLE);
-    sb.append(encodeURIComponent(title.trim()));
-  }
-  
-  if (!StringUtil.isEmpty(mission)) {
-    sb.append(AMPERSAND);
-    sb.append(PARAM_MISSION);
-    sb.append(encodeURIComponent(mission.trim()));
-  }
+            StringBuilder.prototype.append = function (value) {
+                if (value) {
+                    this.strings.push(value);
+                }
+            }
 
-  var schemeUrl = sb.toString();
-  setValue('ocb_result', schemeUrl);
-}
+            StringBuilder.prototype.clear = function () {
+                this.strings.length = 1;
+            }
 
-function generateLockerUrl() {
-  var isDirect = isChecked('locker_direct');
-  var command = getValue('locker_command');
-  var url = getValue('locker_url');
-  var title = getValue('locker_title');
-  var titleType = getSelectedValue('locker_title_type')
-  
-  var sb = new StringBuilder();
-  // scheme , direct
-  sb.append(LOCKER_SCHEME);
-  if (isDirect) {
-    sb.append(DIRECT);
-  }
-  // command
-  sb.append(StringUtil.removeLastChar(command.trim(), '/'));
-  sb.append(QUERY);
+            StringBuilder.prototype.toString = function () {
+                return this.strings.join("");
+            }
+            //------------------------------------------------
 
-  // url
-  sb.append(PARAM_URL);
-  sb.append(encodeURIComponent(url.trim()));
-  
-  // title  
-  if (!StringUtil.isEmpty(title)) {
-    sb.append(AMPERSAND);
-    sb.append(PARAM_TITLE);
-    sb.append(encodeURIComponent(title.trim()));
-  }
-  
-  // titleType  
-  if (!StringUtil.isEmpty(titleType)) {
-    sb.append(AMPERSAND);
-    sb.append(PARAM_TITLE_TYPE);
-    sb.append(titleType);
-  }
+            function generateOcbUrl() {
+                var isDirect = isChecked('ocb_direct');
+                var command = getValue('ocb_command');
+                var url = getValue('ocb_url');
+                var title = getValue('ocb_title');
+                var mission = getValue('ocb_mission_id');
 
-  var schemeUrl = sb.toString();
-  setValue('locker_result', schemeUrl);
-}
+                var sb = new StringBuilder();
+                // scheme , direct
+                sb.append(OCB_SCHEME);
+                if (isDirect) {
+                    sb.append(DIRECT);
+                }
+                // command
+                sb.append(StringUtil.removeLastChar(command.trim(), '/'));
+                sb.append(QUERY);
 
-function isChecked(id) {
-  return document.getElementById(id).checked;
-}
+                // url
+                sb.append(PARAM_URL);
+                sb.append(encodeURIComponent(url.trim()));
 
-function getValue(id) {
-  return document.getElementById(id).value;
-}
+                // title  
+                if (!StringUtil.isEmpty(title)) {
+                    sb.append(AMPERSAND);
+                    sb.append(PARAM_TITLE);
+                    sb.append(encodeURIComponent(title.trim()));
+                }
 
-function getSelectedValue(id) {
-  var s = document.getElementById(id)
-  return s.options[s.selectedIndex].value;
-}
+                if (!StringUtil.isEmpty(mission)) {
+                    sb.append(AMPERSAND);
+                    sb.append(PARAM_MISSION);
+                    sb.append(encodeURIComponent(mission.trim()));
+                }
 
-function setValue(id, value) {
-  document.getElementById(id).value = value;
-}
+                var schemeUrl = sb.toString();
+                setValue('ocb_result', schemeUrl);
+                setHtmlValue('ocb_result_link', generateLink(schemeUrl, schemeUrl));
+            }
 
-function generateLink(name, url) {
-  return "<a href=" + url + ">" + name + "</a>";
-}
+            function generateLockerUrl() {
+                var isDirect = isChecked('locker_direct');
+                var command = getValue('locker_command');
+                var url = getValue('locker_url');
+                var title = getValue('locker_title');
+                var titleType = getSelectedValue('locker_title_type')
 
-function copyToClipboard(id) {
-  var copyText = document.getElementById(id);
-  copyText.select();
-  document.execCommand("Copy");
-}
-</script>
-</head>
-  
-<body id="main_body">
-   <div id="ocb_container">
-     <h2><a>OK Cashbag</a></h2>
-       <table>
-         <thead>
-           <th class="left LEFT" />
-           <th class="right RIGHT" />
-         </thead>
-         <tr>
-           <td class><label for="element_0">인트로 미노출</label></td>
-           <td><input type="checkbox" id="ocb_direct" /></td>
-         </tr>
-         <tr>
-           <td class="left"><label for="element_1">Command</label></td>     
-           <td class="right"><input type="text" id="ocb_command" value="detail/event" /></td>
-         </tr>
-         <tr>
-            <td class="left"><label for="element_2">Url</label></td>
-            <td class="right"><input type="text" id="ocb_url" value="https://devevent.okcashbag.com/event/zone/newrewordmall/newRewordmall.mocb?mission_id=40480&feed_id=40000"/></td>
-         </tr>
-         <tr>
-            <td class="left"><label for="element_3">Title</label></td>
-            <td class="right"><input type="text" id="ocb_title"  value="이벤트"/></td>
-         </tr>
-         <tr>
-            <td class="left"><label for="element_4">Event Id</label></td>
-            <td class="right"><input type="text" id="ocb_mission_id"  value=""/></td>
-         </tr>
-         
-         <th align="left">
-           <button onclick="generateOcbUrl()">URL 생성하기</button>
-         </th>
-       </table>
+                var sb = new StringBuilder();
+                // scheme , direct
+                sb.append(LOCKER_SCHEME);
+                if (isDirect) {
+                    sb.append(DIRECT);
+                }
+                // command
+                sb.append(StringUtil.removeLastChar(command.trim(), '/'));
+                sb.append(QUERY);
 
-      <h4><a>Result</a></h4>
-       <table>
-         <th align="left">           
-           <input id="ocb_result" />
-         </th>
-     </table>
-     <button onclick="copyToClipboard('ocb_result')">클립보드로 복사</button>
-  
-  </div>
-  
-   <div id="locker_container">
-     <h2><a>O-Lock</a></h2>
-       <table>
-         <thead>
-           <th class="left LEFT" />
-           <th class="right RIGHT" />
-         </thead>
-         <tr>
-           <td class><label for="element_0">인트로 미노출</label></td>
-           <td><input type="checkbox" id="locker_direct" /></td>
-         </tr>
-         <tr>
-           <td class="left"><label for="locker_element_1">Command</label></td>     
-           <td class="right"><input type="text" id="locker_command" value="web" /></td>
-         </tr>
-         <tr>
-            <td class="left"><label for="locker_element_2">Url</label></td>
-            <td class="right"><input type="text" id="locker_url" value="https://webview.okcashbag.com/v1.0/lockerapp/index.html"/></td>
-         </tr>
-         <tr>
-            <td class="left"><label for="locker_element_3">Title</label></td>
-            <td class="right"><input type="text" id="locker_title" value="이벤트"/></td>
-         </tr>
-         <tr>
-            <td class="left"><label for="locker_element_4">TitleType</label></td>
-            <td class="right"><select id="locker_title_type" >
-                        <option value="">none</option>
-                        <option value="normal">normal</option>
-                        <option value="back">back</option>
-                        <option value="close">close</option>
-                    </select></td>
-         </tr>
-         
-         <th align="left">
-           <button onclick="generateLockerUrl()">URL 생성하기</button>
-         </th>
-       </table>
+                // url
+                sb.append(PARAM_URL);
+                sb.append(encodeURIComponent(url.trim()));
 
-      <h4><a>Result</a></h4>
-       <table>
-         <th align="left">
-           <input id="locker_result"/>
-         </th>
-       </table>
-       <button onclick="copyToClipboard('locker_result')">클립보드로 복사</button>
-  </div>
- 
-  </body>
+                // title  
+                if (!StringUtil.isEmpty(title)) {
+                    sb.append(AMPERSAND);
+                    sb.append(PARAM_TITLE);
+                    sb.append(encodeURIComponent(title.trim()));
+                }
+
+                // titleType  
+                if (!StringUtil.isEmpty(titleType)) {
+                    sb.append(AMPERSAND);
+                    sb.append(PARAM_TITLE_TYPE);
+                    sb.append(titleType);
+                }
+
+                var schemeUrl = sb.toString();
+                setValue('locker_result', schemeUrl);
+                setHtmlValue('locker_result_link', generateLink(schemeUrl, schemeUrl));
+            }
+
+            function isChecked(id) {
+                return document.getElementById(id).checked;
+            }
+
+            function getValue(id) {
+                return document.getElementById(id).value;
+            }
+
+            function getSelectedValue(id) {
+                var s = document.getElementById(id)
+                return s.options[s.selectedIndex].value;
+            }
+
+            function setValue(id, value) {
+                document.getElementById(id).value = value;
+            }
+
+            function setHtmlValue(id, value) {
+                document.getElementById(id).innerHTML= value;
+            }
+
+            function generateLink(name, url) {
+                return "<a target='_blank' href=" + url + ">" + name + "</a>";
+            }
+
+            function copyToClipboard(id) {
+                var copyText = document.getElementById(id);
+                copyText.select();
+                document.execCommand("Copy");
+            }
+        </script>
+    </head>
+
+    <body id="main_body">
+        <div id="ocb_container">
+            <h2><a>OK Cashbag</a></h2>
+            <table>
+                <thead>
+                    <th class="left LEFT" />
+                        <th class="right RIGHT" />
+                </thead>
+                <tr>
+                    <td class><label for="element_0">인트로 미노출</label></td>
+                    <td><input type="checkbox" id="ocb_direct" /></td>
+                </tr>
+                <tr>
+                    <td class="left"><label for="element_1">Command</label></td>     
+                    <td class="right"><input type="text" id="ocb_command" value="detail/event" /></td>
+                </tr>
+                <tr>
+                    <td class="left"><label for="element_2">Url</label></td>
+                    <td class="right"><input type="text" id="ocb_url" value="https://devevent.okcashbag.com/event/zone/newrewordmall/newRewordmall.mocb?mission_id=40480&feed_id=40000"/></td>
+                </tr>
+                <tr>
+                    <td class="left"><label for="element_3">Title</label></td>
+                    <td class="right"><input type="text" id="ocb_title"  value="이벤트"/></td>
+                </tr>
+                <tr>
+                    <td class="left"><label for="element_4">Event Id</label></td>
+                    <td class="right"><input type="text" id="ocb_mission_id"  value=""/></td>
+                </tr>
+
+                <th align="left">
+                    <button onclick="generateOcbUrl()">URL 생성하기</button>
+                </th>
+            </table>
+
+            <h4><a>Result</a></h4>
+            <table>
+                <th align="left">           
+                    <input id="ocb_result" />
+                </th>
+            </table>
+            <table>
+                <th align="left">           
+                    <b id="ocb_result_link"></b>
+                </th>
+            </table>
+            <button onclick="copyToClipboard('ocb_result')">클립보드로 복사</button>
+
+        </div>
+
+        <div id="locker_container">
+            <h2><a>O-Lock</a></h2>
+            <table>
+                <thead>
+                    <th class="left LEFT" />
+                        <th class="right RIGHT" />
+                </thead>
+                <tr>
+                    <td class><label for="element_0">인트로 미노출</label></td>
+                    <td><input type="checkbox" id="locker_direct" /></td>
+                </tr>
+                <tr>
+                    <td class="left"><label for="locker_element_1">Command</label></td>     
+                    <td class="right"><input type="text" id="locker_command" value="web" /></td>
+                </tr>
+                <tr>
+                    <td class="left"><label for="locker_element_2">Url</label></td>
+                    <td class="right"><input type="text" id="locker_url" value="https://webview.okcashbag.com/v1.0/lockerapp/index.html"/></td>
+                </tr>
+                <tr>
+                    <td class="left"><label for="locker_element_3">Title</label></td>
+                    <td class="right"><input type="text" id="locker_title" value="이벤트"/></td>
+                </tr>
+                <tr>
+                    <td class="left"><label for="locker_element_4">TitleType</label></td>
+                    <td class="right"><select id="locker_title_type" >
+                            <option value="">none</option>
+                            <option value="normal">normal</option>
+                            <option value="back">back</option>
+                            <option value="close">close</option>
+                        </select></td>
+                </tr>
+
+                <th align="left">
+                    <button onclick="generateLockerUrl()">URL 생성하기</button>
+                </th>
+            </table>
+
+            <h4><a>Result</a></h4>
+            <table>
+                <th align="left">
+                    <input id="locker_result"/>
+                </th>
+            </table>
+            <table>
+                <th align="left">           
+                    <b id="locker_result_link"></b>
+                </th>
+            </table>
+            <button onclick="copyToClipboard('locker_result')">클립보드로 복사</button>
+        </div>
+
+    </body>
 </html>
